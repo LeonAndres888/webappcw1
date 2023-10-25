@@ -1,0 +1,40 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #f4f4f4;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  border: none;
+  cursor: pointer;
+  background-color: #333;
+  color: #ffffff;
+  transition: background-color 0.2s ease;
+  border-radius: 300px;
+}
+
+button:hover {
+  background-color: #555;
+  border-radius: 300px;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+main {
+  padding: 2rem;
+}
+
+figure img {
+  width: 40px;
+  max-width: 300px;
+}
