@@ -13,12 +13,12 @@
 <body>
   <div id="app">
     <header>
-      <h1 v-text="sitename"></h1>
+      <p id="titlename" v-text="sitename"></p>
       <!-- ... other header content ... -->
     </header>
     <main>
       <div v-if="showProduct">
-        <div v-for="product in products">
+        <div v-for="product in products" class="product-card">
           <figure>
             <img v-bind:src="product.image">
           </figure>

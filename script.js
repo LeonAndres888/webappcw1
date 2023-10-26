@@ -1,7 +1,7 @@
 let webstore = new Vue({
   el: "#app",
   data: {
-    sitename: "Study Session Store",
+    sitename: "STUDY SESSION STORE",
     showProduct: true,
     products: [
       {
@@ -18,6 +18,14 @@ let webstore = new Vue({
         location: "Bristol",
         price: 80,
         image: "images/music.png",
+        availableInventory: 5,
+      },
+      {
+        id: 1003,
+        title: "English Lesson",
+        location: "Oxford",
+        price: 110,
+        image: "images/english.png",
         availableInventory: 5,
       },
     ],
