@@ -18,18 +18,17 @@
     </header>
     <main>
       <div v-if="showProduct">
-        <div v-for="product in products" class="product-card">
+        <div v-for="product in products" class="product-card" :key="product.id">
           <figure>
-            <img v-bind:src="product.image">
+            <img v-bind:src="product.image" :alt="product.title">
           </figure>
           <h2 v-text="product.title"></h2>
           <p>Location: {{product.location}}</p>
           <p>Price: £{{product.price}}</p>
           <p>Spaces: {{product.availableInventory}}</p>
-          <button v-if="canAddToTheCart(product)" v-on:click="addItemToTheCart(product.id)">Add to the Cart</button>
+          <button v-if="canAddToTheCart(product)" v-on:click="addItemToTheCart(product.id)">Add to Cart</button>
           <div v-else>
-            <button disabled>Add to the Cart</button>
-            You have added all the available items for this product in your cart
+            <p>All spaces filled</p>
           </div>
         </div>
       </div>
@@ -39,7 +38,7 @@
       </div>
     </main>
   </div>
-  <script src="script.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 
 </html>
