@@ -15,8 +15,11 @@ const webstore = new Vue({
       ).length;
       return product.availableInventory > itemsInCartForProduct;
     },
-    addItemToTheCart(productId) {
-      this.cart.push(productId);
+    addItemToTheCart: function (product) {
+      if (product.availableInventory > 0) {
+        this.cart.push(product.id);
+        product.availableInventory--; 
+      }
     },
   },
 });
