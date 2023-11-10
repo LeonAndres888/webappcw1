@@ -7,7 +7,9 @@ const webstore = new Vue({
     showProduct: true,
     products,
     cart: [],
-    searchQuery: "", // For search functionality
+    searchQuery: "",
+    sortAttribute: "title",
+    sortOrder: "ascending",
   },
   computed: {
     filteredProducts() {
@@ -19,6 +21,20 @@ const webstore = new Vue({
         return (
           product.title.toLowerCase().includes(searchTerm) ||
           product.location.toLowerCase().includes(searchTerm)
+        );
+      });
+    },
+    sortedProducts() {
+      return this.filteredProducts.slice().sort((a, b) => {
+        let modifier = this.sortOrder === "ascending" ? 1 : -1;
+        if (
+          this.sortAttribute === "price" ||
+          this.sortAttribute === "availableInventory"
+        ) {
+          return (a[this.sortAttribute] - b[this.sortAttribute]) * modifier;
+        }
+        return (
+          a[this.sortAttribute].localeCompare(b[this.sortAttribute]) * modifier
         );
       });
     },
@@ -40,5 +56,8 @@ const webstore = new Vue({
       }
     },
     toggleCart() {},
+    updateSortOrder(order) {
+      this.sortOrder = order;
+    },
   },
 });
