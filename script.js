@@ -7,19 +7,38 @@ const webstore = new Vue({
     showProduct: true,
     products,
     cart: [],
+    searchQuery: "", // For search functionality
+  },
+  computed: {
+    filteredProducts() {
+      let searchTerm = this.searchQuery.trim().toLowerCase();
+      if (!searchTerm) {
+        return this.products;
+      }
+      return this.products.filter((product) => {
+        return (
+          product.title.toLowerCase().includes(searchTerm) ||
+          product.location.toLowerCase().includes(searchTerm)
+        );
+      });
+    },
+    isCartNotEmpty() {
+      return this.cart.length > 0;
+    },
   },
   methods: {
     canAddToTheCart(product) {
-      const itemsInCartForProduct = this.cart.filter(
-        (itemId) => itemId === product.id
-      ).length;
-      return product.availableInventory > itemsInCartForProduct;
+      return (
+        product.availableInventory >
+        this.cart.filter((itemId) => itemId === product.id).length
+      );
     },
-    addItemToTheCart: function (product) {
-      if (product.availableInventory > 0) {
+    addItemToTheCart(product) {
+      if (this.canAddToTheCart(product)) {
         this.cart.push(product.id);
-        product.availableInventory--; 
+        product.availableInventory--;
       }
     },
+    toggleCart() {},
   },
 });

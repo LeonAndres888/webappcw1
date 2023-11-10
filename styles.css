@@ -51,7 +51,8 @@ figure img {
 .product-card {
   border: 1px solid #ccc;
   padding: 20px;
-  margin: 10px;
+  margin-top: 90px;
+  margin-left: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   background-color: #fff;
@@ -68,4 +69,12 @@ figure img {
 
 .product-card img {
   max-width: 100%;
+}
+
+#searchBar {
+  width: 200px;
+  height: 40px;
+  border-radius: 10px;
+  position: absolute;
+  top: 130px;
 }

@@ -13,22 +13,25 @@
 <body>
   <div id="app">
     <header>
-      <p id="titlename" v-text="sitename"></p>
-      <!-- ... other header content ... -->
+      <h1 id="titlename" v-text="sitename"></h1>
+      <!-- Search input field -->
+      <input type="text" id="searchBar" v-model="searchQuery" placeholder="Search lessons..." />
+      <button v-show="isCartNotEmpty" v-on:click="toggleCart">Shopping Cart ({{ cart.length }})</button>
     </header>
     <main>
       <div v-if="showProduct">
-        <div v-for="product in products" :key="product.id" class="product-card">
+        <!-- Update v-for to loop over filteredProducts -->
+        <div v-for="product in filteredProducts" :key="product.id" class="product-card">
           <figure>
             <img v-bind:src="product.image" alt="product.title">
           </figure>
           <h2 v-text="product.title"></h2>
-          <p>Location: {{product.location}}</p>
-          <p>Price: £{{product.price}}</p>
-          <p>Spaces: {{product.availableInventory}}</p>
+          <p>Location: {{ product.location }}</p>
+          <p>Price: £{{ product.price }}</p>
+          <p>Spaces: {{ product.availableInventory }}</p>
           <button v-on:click="addItemToTheCart(product)" :disabled="product.availableInventory === 0">Add to
             Cart</button>
-          <p v-if="product.availableInventory === 0">No more spaces available</p>
+          <p v-if="product.availableInventory === 0">Sold Out</p>
         </div>
       </div>
       <div v-else>
