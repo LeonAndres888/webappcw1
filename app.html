@@ -18,23 +18,24 @@
         🛒 Shopping Cart 🛒 ({{ cart.length }})
       </button>
     </header>
-    <!-- search input -->
-    <input type="text" id="searchBar" v-model="searchQuery" placeholder="Search lessons..." />
 
-    <!-- dropdown for sorting -->
-    <select id="dropDown" v-model="sortAttribute">
-      <option value="title">Subject</option>
-      <option value="location">Location</option>
-      <option value="price">Price</option>
-      <option value="availableInventory">Spaces</option>
-    </select>
-
-    <!-- sorting buttons -->
-    <button id="ascButton" @click="updateSortOrder('ascending')">Ascending</button>
-    <button id="dscButton" @click="updateSortOrder('descending')">Descending</button>
     <main>
 
       <div v-if="showProduct">
+        <!-- search input -->
+        <input type="text" id="searchBar" v-model="searchQuery" placeholder="Search lessons..." />
+
+        <!-- dropdown for sorting -->
+        <select id="dropDown" v-model="sortAttribute">
+          <option value="title">Subject</option>
+          <option value="location">Location</option>
+          <option value="price">Price</option>
+          <option value="availableInventory">Spaces</option>
+        </select>
+
+        <!-- sorting buttons -->
+        <button id="ascButton" @click="updateSortOrder('ascending')">Ascending</button>
+        <button id="dscButton" @click="updateSortOrder('descending')">Descending</button>
         <div v-for="product in sortedProducts" :key="product.id" class="product-card">
           <figure>
             <img v-bind:src="product.image" alt="product.title">
