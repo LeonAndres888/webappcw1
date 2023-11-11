@@ -14,11 +14,12 @@
   <div id="app">
     <header>
       <h1 id="titlename" v-text="sitename"></h1>
-
+      <button id="cartBtn" v-on:click="toggleCart">
+        🛒 Shopping Cart 🛒 ({{ cart.length }})
+      </button>
     </header>
     <!-- search input -->
     <input type="text" id="searchBar" v-model="searchQuery" placeholder="Search lessons..." />
-    <button v-show="isCartNotEmpty" v-on:click="toggleCart">Shopping Cart ({{ cart.length }})</button>
 
     <!-- dropdown for sorting -->
     <select id="dropDown" v-model="sortAttribute">
@@ -44,11 +45,17 @@
           <p>Spaces: {{ product.availableInventory }}</p>
           <button v-on:click="addItemToTheCart(product)" :disabled="product.availableInventory === 0">Add to
             Cart</button>
-          <p v-if="product.availableInventory === 0">Sold Out</p>
+          <p id="soldOut" v-if="product.availableInventory === 0">Sold Out</p>
         </div>
       </div>
       <div v-else>
-        <h1>Welcome to the Checkout Page</h1>
+        <h1>Shopping Cart</h1>
+        <ul>
+          <li v-for="item in cart" :key="item.id">
+            {{ item.title }} - £{{ item.price }}
+            <button @click="removeItemFromCart(item)">Remove</button>
+          </li>
+        </ul>
       </div>
     </main>
   </div>

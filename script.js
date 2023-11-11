@@ -38,26 +38,34 @@ const webstore = new Vue({
         );
       });
     },
-    isCartNotEmpty() {
-      return this.cart.length > 0;
-    },
   },
   methods: {
     canAddToTheCart(product) {
-      return (
-        product.availableInventory >
-        this.cart.filter((itemId) => itemId === product.id).length
-      );
+      let cartItem = this.cart.find((item) => item.id === product.id);
+      let cartItemCount = cartItem ? cartItem.quantity : 0;
+      return product.availableInventory > cartItemCount;
     },
     addItemToTheCart(product) {
-      if (this.canAddToTheCart(product)) {
-        this.cart.push(product.id);
+      if (product.availableInventory > 0) {
+        this.cart.push(product);
         product.availableInventory--;
       }
     },
-    toggleCart() {},
     updateSortOrder(order) {
       this.sortOrder = order;
+    },
+    removeItemFromCart(item) {
+      let cartItem = this.cart.find((cartItem) => cartItem.id === item.id);
+      if (cartItem.quantity > 1) {
+        cartItem.quantity--;
+      } else {
+        let index = this.cart.indexOf(cartItem);
+        this.cart.splice(index, 1);
+      }
+      item.availableInventory++;
+    },
+    toggleCart() {
+      this.showProduct = !this.showProduct;
     },
   },
 });

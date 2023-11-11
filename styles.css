@@ -106,3 +106,16 @@ figure img {
   left: 500px;
   top: 140px;
 }
+#soldOut {
+  font-weight: bold;
+  color: red;
+  margin-bottom: 0px;
+}
+#cartBtn {
+  border-radius: 5px;
+  height: 70px;
+  width: 180px;
+  position: absolute;
+  right: 100px;
+  top: 50px;
+}
