@@ -1,22 +1,25 @@
-import products from "./lessons.js";
+import products from "./lessons.js"; // Import lesson data from lessons.js
 
 const webstore = new Vue({
   el: "#app",
   data: {
+    // Data properties
     sitename: "👨‍🎓 STUDY SESSION STORE 👩‍🎓",
     showProduct: true,
     products,
     cart: [],
-    searchQuery: "",
+    searchLesson: "",
     sortAttribute: "title",
-    sortOrder: "ascending",
+    sortOrder: "",
     custName: "",
     custPhone: "",
     orderSubmitted: false,
   },
   computed: {
+    // Computed properties
     filteredProducts() {
-      let searchTerm = this.searchQuery.trim().toLowerCase();
+      // Filter products based on search lesson
+      let searchTerm = this.searchLesson.trim().toLowerCase();
       if (!searchTerm) {
         return this.products;
       }
@@ -27,12 +30,14 @@ const webstore = new Vue({
         );
       });
     },
-    isValidCheckout() {
+    validCheckout() {
+      // Validate checkout
       const nameRegex = /^[A-Za-z\s]+$/;
       const phoneRegex = /^[0-9()-]+$/;
       return nameRegex.test(this.custName) && phoneRegex.test(this.custPhone);
     },
     sortedProducts() {
+      // Sort products functionality
       return this.filteredProducts.slice().sort((a, b) => {
         let modifier = this.sortOrder === "ascending" ? 1 : -1;
         if (
@@ -48,26 +53,33 @@ const webstore = new Vue({
     },
   },
   methods: {
+    // Methods for different functionalities
+
     submitOrder() {
-      if (this.isValidCheckout) {
+      // Submit order if checkout request is valid
+      if (this.validCheckout) {
         this.orderSubmitted = true;
       }
     },
-    canAddToTheCart(product) {
+    canAddToCart(product) {
+      // Check if product can be added to cart
       let cartItem = this.cart.find((item) => item.id === product.id);
       let cartItemCount = cartItem ? cartItem.quantity : 0;
       return product.availableInventory > cartItemCount;
     },
-    addItemToTheCart(product) {
+    addItemCart(product) {
+      // Add product and decrease inventory by 1
       if (product.availableInventory > 0) {
         this.cart.push(product);
         product.availableInventory--;
       }
     },
     updateSortOrder(order) {
+      // Update sorting order based on asc or dsc buttons
       this.sortOrder = order;
     },
-    removeItemFromCart(item) {
+    removeItemCart(item) {
+      // Remove item from cart and increase inventory by 1
       let cartItem = this.cart.find((cartItem) => cartItem.id === item.id);
       if (cartItem.quantity > 1) {
         cartItem.quantity--;
@@ -79,6 +91,7 @@ const webstore = new Vue({
     },
 
     toggleCart() {
+      // Toggle between cart and product list
       this.showProduct = !this.showProduct;
     },
   },

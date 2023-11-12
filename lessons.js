@@ -1,5 +1,6 @@
 export default [
   {
+    // Card data
     id: 1001,
     title: "Math Lesson",
     location: "London",

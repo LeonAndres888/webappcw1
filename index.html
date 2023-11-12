@@ -14,18 +14,19 @@
   <div id="app">
     <header>
       <h1 id="titlename" v-text="sitename"></h1>
+      <!-- Toggle cart button -->
       <button id="cartBtn" v-on:click="toggleCart">
-        🛒 Shopping Cart 🛒 ({{ cart.length }})
+        🛒 Shopping Cart 🛒 ({{cart.length}})
       </button>
     </header>
 
     <main>
 
       <div v-if="showProduct">
-        <!-- search input -->
-        <input type="text" id="searchBar" v-model="searchQuery" placeholder="Search lessons..." />
+        <!-- Search input -->
+        <input type="text" id="searchBar" v-model="searchLesson" placeholder="Search lessons..." />
 
-        <!-- dropdown for sorting -->
+        <!-- Dropdown for sorting -->
         <select id="dropDown" v-model="sortAttribute">
           <option value="title">Subject</option>
           <option value="location">Location</option>
@@ -33,18 +34,22 @@
           <option value="availableInventory">Spaces</option>
         </select>
 
-        <!-- sorting buttons -->
+        <!-- Sorting buttons -->
         <button id="ascButton" @click="updateSortOrder('ascending')">Ascending</button>
         <button id="dscButton" @click="updateSortOrder('descending')">Descending</button>
+
+        <!-- Lesson cards displayed -->
         <div v-for="product in sortedProducts" :key="product.id" class="product-card">
+
+          <!-- Loop through product array -->
           <figure>
             <img v-bind:src="product.image" alt="product.title">
           </figure>
           <h2 v-text="product.title"></h2>
-          <p>Location: {{ product.location }}</p>
-          <p>Price: £{{ product.price }}</p>
-          <p>Spaces: {{ product.availableInventory }}</p>
-          <button v-on:click="addItemToTheCart(product)" :disabled="product.availableInventory === 0">Add to
+          <p>Location: {{product.location}}</p>
+          <p>Price: £{{product.price}}</p>
+          <p>Spaces: {{product.availableInventory}}</p>
+          <button v-on:click="addItemCart(product)" :disabled="product.availableInventory === 0">Add to
             Cart</button>
           <p id="soldOut" v-if="product.availableInventory === 0">Sold Out</p>
         </div>
@@ -52,20 +57,21 @@
       <div v-else>
         <h1>Shopping Cart</h1>
 
+        <!-- Display items in cart -->
         <p v-for="item in cart" :key="item.id">
-          {{ item.title }} - £{{ item.price }}
-          <button @click="removeItemFromCart(item)">Remove</button>
+          {{ item.title }} - {{ item.location }} - £{{ item.price }}
+          <button id="remBtn" @click="removeItemCart(item)">Remove</button>
         </p>
 
-        <!-- Checkout Form -->
+        <!-- Checkout form -->
         <div id="checkoutForm">
           <input type="text" v-model="custName" placeholder="Name">
           <input type="text" v-model="custPhone" placeholder="Phone number">
-          <button @click="submitOrder" :disabled="!isValidCheckout">Checkout</button>
+          <button id="checkoutBtn" @click="submitOrder" :disabled="!validCheckout">Checkout</button>
         </div>
 
         <!-- Order Confirmation Message -->
-        <p v-if="orderSubmitted">Thank you for your order!</p>
+        <p v-if="orderSubmitted" id="thankYou">Thank you for your order!</p>
 
       </div>
     </main>
