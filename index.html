@@ -51,12 +51,22 @@
       </div>
       <div v-else>
         <h1>Shopping Cart</h1>
-        <ul>
-          <li v-for="item in cart" :key="item.id">
-            {{ item.title }} - £{{ item.price }}
-            <button @click="removeItemFromCart(item)">Remove</button>
-          </li>
-        </ul>
+
+        <p v-for="item in cart" :key="item.id">
+          {{ item.title }} - £{{ item.price }}
+          <button @click="removeItemFromCart(item)">Remove</button>
+        </p>
+
+        <!-- Checkout Form -->
+        <div id="checkoutForm">
+          <input type="text" v-model="custName" placeholder="Name">
+          <input type="text" v-model="custPhone" placeholder="Phone number">
+          <button @click="submitOrder" :disabled="!isValidCheckout">Checkout</button>
+        </div>
+
+        <!-- Order Confirmation Message -->
+        <p v-if="orderSubmitted">Thank you for your order!</p>
+
       </div>
     </main>
   </div>

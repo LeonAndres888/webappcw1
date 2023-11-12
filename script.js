@@ -10,6 +10,9 @@ const webstore = new Vue({
     searchQuery: "",
     sortAttribute: "title",
     sortOrder: "ascending",
+    custName: "",
+    custPhone: "",
+    orderSubmitted: false,
   },
   computed: {
     filteredProducts() {
@@ -23,6 +26,11 @@ const webstore = new Vue({
           product.location.toLowerCase().includes(searchTerm)
         );
       });
+    },
+    isValidCheckout() {
+      const nameRegex = /^[A-Za-z\s]+$/;
+      const phoneRegex = /^[0-9()-]+$/;
+      return nameRegex.test(this.custName) && phoneRegex.test(this.custPhone);
     },
     sortedProducts() {
       return this.filteredProducts.slice().sort((a, b) => {
@@ -40,6 +48,11 @@ const webstore = new Vue({
     },
   },
   methods: {
+    submitOrder() {
+      if (this.isValidCheckout) {
+        this.orderSubmitted = true;
+      }
+    },
     canAddToTheCart(product) {
       let cartItem = this.cart.find((item) => item.id === product.id);
       let cartItemCount = cartItem ? cartItem.quantity : 0;
@@ -64,6 +77,7 @@ const webstore = new Vue({
       }
       item.availableInventory++;
     },
+
     toggleCart() {
       this.showProduct = !this.showProduct;
     },
