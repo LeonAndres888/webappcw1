@@ -52,7 +52,7 @@ const webstore = new Vue({
     fetchLessons() {
       // Fetch lessons from the backend when the component is mounted
       fetch(
-        "http://storefinal-env.eba-vfsgptpf.us-east-1.elasticbeanstalk.com/api/lessons"
+        "https://storefinal-env.eba-vfsgptpf.us-east-1.elasticbeanstalk.com/api/lessons"
       )
         .then((response) => response.json())
         .then((data) => {
@@ -76,7 +76,7 @@ const webstore = new Vue({
       console.log("Order items before submitting:", order.items);
 
       fetch(
-        "http://storefinal-env.eba-vfsgptpf.us-east-1.elasticbeanstalk.com/api/orders",
+        "https://storefinal-env.eba-vfsgptpf.us-east-1.elasticbeanstalk.com/api/orders",
         {
           method: "POST",
           headers: {
@@ -113,7 +113,7 @@ const webstore = new Vue({
 
       const updatePromises = orderedItems.map((item) => {
         return fetch(
-          `http://storefinal-env.eba-vfsgptpf.us-east-1.elasticbeanstalk.com/api/lessons/${item.lessonId}`,
+          `https://storefinal-env.eba-vfsgptpf.us-east-1.elasticbeanstalk.com/api/lessons/${item.lessonId}`,
           {
             method: "PUT",
             headers: {
