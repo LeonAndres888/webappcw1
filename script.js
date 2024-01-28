@@ -17,6 +17,7 @@ const webstore = new Vue({
   computed: {
     // Computed properties for filtering and sorting the product list
     filteredProducts() {
+      // Filters and returns products based on search
       let searchTerm = this.searchLesson.trim().toLowerCase();
       return this.products.filter((product) => {
         return (
@@ -26,14 +27,18 @@ const webstore = new Vue({
       });
     },
     cartItemCount() {
+      // Calculates total count of items in the cart
       return this.cart.reduce((total, item) => total + item.quantity, 0);
     },
+
     validCheckout() {
+      // Validates customer name and phone number for checkout
       const nameRegex = /^[A-Za-z\s]+$/;
       const phoneRegex = /^[0-9()-]+$/;
       return nameRegex.test(this.custName) && phoneRegex.test(this.custPhone);
     },
     sortedProducts() {
+      // Sorts filtered product list based on selected criteria
       let modifier = this.sortOrder === "ascending" ? 1 : -1;
       return this.filteredProducts.slice().sort((a, b) => {
         if (
@@ -50,7 +55,7 @@ const webstore = new Vue({
   },
   methods: {
     fetchLessons() {
-      // Fetch lessons from the backend when the component is mounted
+      // Fetches lesson data from server to populate the products array
       fetch(
         "https://storefinal-env.eba-vfsgptpf.us-east-1.elasticbeanstalk.com/api/lessons"
       )
@@ -63,6 +68,7 @@ const webstore = new Vue({
         });
     },
     submitOrder() {
+      // Submits user's order to the server and handles the response
       const order = {
         name: this.custName,
         phoneNumber: this.custPhone,
@@ -107,6 +113,7 @@ const webstore = new Vue({
     },
 
     updateLessonSpaces(orderedItems, isOrderSubmitted = false) {
+      // Updates available space in lessons after an order is submitted
       if (!isOrderSubmitted) {
         return Promise.resolve();
       }
@@ -190,6 +197,7 @@ const webstore = new Vue({
     },
   },
   mounted() {
+    // Lifecycle hook called when Vue instance is mounted. Used to fetch initial lessons data
     this.fetchLessons();
   },
 });
