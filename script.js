@@ -51,7 +51,9 @@ const webstore = new Vue({
   methods: {
     fetchLessons() {
       // Fetch lessons from the backend when the component is mounted
-      fetch("http://localhost:8080/api/lessons")
+      fetch(
+        "http://storefinal-env.eba-vfsgptpf.us-east-1.elasticbeanstalk.com/api/lessons"
+      )
         .then((response) => response.json())
         .then((data) => {
           this.products = data;
@@ -73,13 +75,16 @@ const webstore = new Vue({
       // Log order items to the console before submitting
       console.log("Order items before submitting:", order.items);
 
-      fetch("http://localhost:8080/api/orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(order),
-      })
+      fetch(
+        "http://storefinal-env.eba-vfsgptpf.us-east-1.elasticbeanstalk.com/api/orders",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(order),
+        }
+      )
         .then((response) => {
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -107,13 +112,16 @@ const webstore = new Vue({
       }
 
       const updatePromises = orderedItems.map((item) => {
-        return fetch(`http://localhost:8080/api/lessons/${item.lessonId}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ numberToDecrease: item.quantity }),
-        }).then((response) => {
+        return fetch(
+          `http://storefinal-env.eba-vfsgptpf.us-east-1.elasticbeanstalk.com/api/lessons/${item.lessonId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ numberToDecrease: item.quantity }),
+          }
+        ).then((response) => {
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
