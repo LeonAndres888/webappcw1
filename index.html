@@ -16,7 +16,7 @@
       <h1 id="titlename" v-text="sitename"></h1>
       <!-- Toggle cart button -->
       <button id="cartBtn" v-on:click="toggleCart">
-        🛒 Shopping Cart 🛒 ({{cart.length}})
+        🛒 Shopping Cart 🛒 ({{ cartItemCount }})
       </button>
     </header>
 
@@ -43,7 +43,7 @@
 
           <!-- Loop through product array -->
           <figure>
-            <img v-bind:src="product.image" alt="product.title">
+            <img :src="product.image" alt="product.title">
           </figure>
           <h2 v-text="product.title"></h2>
           <p>Location: {{product.location}}</p>
@@ -53,7 +53,9 @@
             Cart</button>
           <p id="soldOut" v-if="product.availableInventory === 0">Sold Out</p>
         </div>
+
       </div>
+
       <div v-else>
         <h1>Shopping Cart</h1>
 
