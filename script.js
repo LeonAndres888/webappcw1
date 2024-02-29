@@ -59,9 +59,9 @@ const webstore = new Vue({
       fetch(
         "https://storefinal-env.eba-vfsgptpf.us-east-1.elasticbeanstalk.com/api/lessons"
       )
-        .then((response) => response.json())
+        .then((response) => response.json()) // Processes response to convert it from JSON format to a JavaScript object/array
         .then((data) => {
-          this.products = data;
+          this.products = data; // Assigns fetched data to products array, updating list of lessons displayed on the website
         })
         .catch((error) => {
           console.error("Error fetching lessons:", error);
@@ -73,7 +73,7 @@ const webstore = new Vue({
         name: this.custName,
         phoneNumber: this.custPhone,
         items: this.cart.map((item) => ({
-          lessonId: item._id,
+          lessonId: item._id, // prepares the cart items in the format expected by the backend API for order processing
           quantity: item.quantity,
         })),
       };
@@ -86,21 +86,22 @@ const webstore = new Vue({
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json", // tells the server that the request body format is JSON
           },
-          body: JSON.stringify(order),
+          body: JSON.stringify(order), // converts order into json string (HTTP Request)
         }
       )
         .then((response) => {
+          // if response is not in successful range (200-209)
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
-          return response.json();
+          return response.json(); // parses JSON body that resolves w/ result
         })
         .then((data) => {
           this.orderSubmitted = true;
           console.log("Order submitted:", data);
-          // Call updateLessonSpaces with a new parameter to indicate order submission
+          // decrement available spaces for the ordered lessons
           return this.updateLessonSpaces(order.items, true);
         })
         .then(() => {
@@ -113,7 +114,7 @@ const webstore = new Vue({
     },
 
     updateLessonSpaces(orderedItems, isOrderSubmitted = false) {
-      // Updates available space in lessons after an order is submitted
+      // If order not submitted, do not update
       if (!isOrderSubmitted) {
         return Promise.resolve();
       }
@@ -129,14 +130,15 @@ const webstore = new Vue({
             body: JSON.stringify({ numberToDecrease: item.quantity }),
           }
         ).then((response) => {
+          // if response is not in successful range (200-209)
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
-          return response.json();
+          return response.json(); // parses JSON body that resolves w/ result
         });
       });
 
-      return Promise.all(updatePromises)
+      return Promise.all(updatePromises) // Waits for all the PUT request promises,  function only goes if all lesson spaces have been updated or error
         .then(() => {
           this.fetchLessons(); // Fetch the updated lessons data
         })
