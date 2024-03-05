@@ -1,7 +1,8 @@
 // Creates new Vue instance
 const webstore = new Vue({
   el: "#app",
-  data: {
+  data: function() {
+return {
     // Data properties
     sitename: "👨‍🎓 STUDY SESSION STORE 👩‍🎓",
     showProduct: true,
@@ -13,7 +14,8 @@ const webstore = new Vue({
     custName: "",
     custPhone: "",
     orderSubmitted: false,
-  },
+  };
+},
   computed: {
     // Computed properties for filtering and sorting the product list
     filteredProducts() {
