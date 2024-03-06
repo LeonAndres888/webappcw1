@@ -1,57 +1,120 @@
 <template>
-  <div>
-    <header-component
-      :sitename="sitename"
-      :cartItemCount="cartItemCount"
-      @toggle-cart="toggleCart"
-    />
+  <div class="home">
     <search-sort-component
-      @update-search="updateSearch"
-      @update-sort="updateSort"
+      :search-term="searchLesson"
+      :sort-attribute="sortAttribute"
+      :sort-order="sortOrder"
+      @search-term-changed="(searchTerm) => (searchLesson = searchTerm)"
+      @sort-attribute-changed="(attribute) => (sortAttribute = attribute)"
+      @sort-order-changed="(order) => (sortOrder = order)"
     />
     <product-list-component
-      :products="sortedProducts"
-      @add-to-cart="addToCart"
+      :products="filteredAndSortedProducts"
+      @add-to-cart="addItemCart"
     />
   </div>
 </template>
 
 <script>
-import HeaderComponent from "./HeaderComponent.vue";
-import SearchSortComponent from "./SearchSortComponent.vue";
-import ProductListComponent from "./ProductListComponent.vue";
+import SearchSortComponent from "@/components/SearchSortComponent.vue";
+import ProductListComponent from "@/components/ProductListComponent.vue";
 
 export default {
   name: "HomeView",
   components: {
-    HeaderComponent,
     SearchSortComponent,
     ProductListComponent,
   },
   data() {
     return {
       sitename: "👨‍🎓 STUDY SESSION STORE 👩‍🎓",
-      cartItemCount: 0,
-      // ... rest of the data properties
+      showProduct: true,
+      products: [],
+      cart: [],
+      searchLesson: "",
+      sortAttribute: "title",
+      sortOrder: "ascending",
+      custName: "",
+      custPhone: "",
+      orderSubmitted: false,
     };
   },
   computed: {
-    // ... computed properties like sortedProducts
+    filteredAndSortedProducts() {
+      let sorted = this.products.slice().sort((a, b) => {
+        if (
+          this.sortAttribute === "price" ||
+          this.sortAttribute === "availableInventory"
+        ) {
+          return (
+            (a[this.sortAttribute] - b[this.sortAttribute]) *
+            (this.sortOrder === "ascending" ? 1 : -1)
+          );
+        }
+        return (
+          a[this.sortAttribute].localeCompare(b[this.sortAttribute]) *
+          (this.sortOrder === "ascending" ? 1 : -1)
+        );
+      });
+
+      if (this.searchLesson) {
+        return sorted.filter(
+          (product) =>
+            product.title
+              .toLowerCase()
+              .includes(this.searchLesson.toLowerCase()) ||
+            product.location
+              .toLowerCase()
+              .includes(this.searchLesson.toLowerCase())
+        );
+      }
+
+      return sorted;
+    },
   },
   methods: {
+    fetchLessons() {
+      fetch(
+        "https://storefinal-env.eba-vfsgptpf.us-east-1.elasticbeanstalk.com/api/lessons"
+      )
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          this.products = data;
+        })
+        .catch((error) => {
+          console.error("Error fetching lessons:", error);
+        });
+    },
+    addItemCart(product) {
+      // Here, you would normally check if the product can be added based on the inventory
+      if (product.availableInventory > 0) {
+        let found = this.cart.find((p) => p.id === product.id);
+        if (found) {
+          found.quantity++;
+          product.availableInventory--;
+        } else {
+          this.cart.push({ ...product, quantity: 1 });
+          product.availableInventory--;
+        }
+      } else {
+        alert("This lesson is fully booked.");
+      }
+    },
+    updateSearchTerm(term) {
+      this.searchTerm = term;
+    },
+    updateSort({ attribute, order }) {
+      this.sortAttribute = attribute;
+      this.sortOrder = order;
+    },
     toggleCart() {
-      // ... toggle cart logic
+      this.showProduct = !this.showProduct;
     },
-    updateSearch(searchText) {
-      // ... update search logic
-    },
-    updateSort(sortDetails) {
-      // ... update sort logic
-    },
-    addToCart(product) {
-      // ... add to cart logic
-    },
-    // ... rest of the methods
   },
   mounted() {
     this.fetchLessons();

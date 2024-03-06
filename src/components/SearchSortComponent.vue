@@ -2,18 +2,25 @@
   <div class="search-sort">
     <input
       type="text"
-      placeholder="Search lessons..."
-      v-model="searchText"
-      @input="updateSearch"
+      v-model="searchTerm"
+      @input="emitSearchTerm"
+      placeholder="Search for products..."
+      class="search-input"
     />
-    <select v-model="sortAttribute" @change="sortProducts">
-      <option value="title">Subject</option>
-      <option value="location">Location</option>
+
+    <select
+      v-model="sortAttribute"
+      @change="emitSortChange"
+      class="sort-select"
+    >
+      <option value="title">Title</option>
       <option value="price">Price</option>
-      <option value="availableInventory">Spaces</option>
     </select>
-    <button @click="sortProducts('ascending')">Ascending</button>
-    <button @click="sortProducts('descending')">Descending</button>
+
+    <button @click="setSortOrder('ascending')" class="sort-btn asc">Asc</button>
+    <button @click="setSortOrder('descending')" class="sort-btn desc">
+      Desc
+    </button>
   </div>
 </template>
 
@@ -22,18 +29,24 @@ export default {
   name: "SearchSortComponent",
   data() {
     return {
-      searchText: "",
+      searchTerm: "",
       sortAttribute: "title",
       sortOrder: "ascending",
     };
   },
   methods: {
-    updateSearch() {
-      this.$emit("update-search", this.searchText);
+    emitSearchTerm() {
+      this.$emit("search-term-changed", this.searchTerm);
     },
-    sortProducts(order) {
+    emitSortChange() {
+      this.$emit("sort-changed", {
+        attribute: this.sortAttribute,
+        order: this.sortOrder,
+      });
+    },
+    setSortOrder(order) {
       this.sortOrder = order;
-      this.$emit("update-sort", { attribute: this.sortAttribute, order });
+      this.emitSortChange();
     },
   },
 };
@@ -46,11 +59,41 @@ export default {
   margin-bottom: 20px;
 }
 
-.search-sort input,
-.search-sort select,
-.search-sort button {
+.search-input,
+.sort-select,
+.sort-btn {
   margin: 0 10px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
-/* Add other styling rules as needed */
+.sort-btn {
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+.sort-btn.asc {
+  border-radius: 5px;
+  height: 30px;
+  width: 110px;
+  margin-right: 40px;
+  position: absolute;
+  left: 230px;
+  top: 140px;
+}
+
+.sort-btn.desc {
+  border-radius: 5px;
+  height: 30px;
+  width: 110px;
+  position: absolute;
+  left: 350px;
+  top: 140px;
+}
+
+.sort-btn:hover {
+  background-color: #0056b3;
+}
 </style>

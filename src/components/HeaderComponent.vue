@@ -1,9 +1,7 @@
 <template>
-  <header>
+  <header class="site-header">
     <h1>{{ sitename }}</h1>
-    <button @click="toggleCart">
-      🛒 Shopping Cart 🛒 ({{ cartItemCount }})
-    </button>
+    <button @click="toggleCart">🛒 Shopping Cart ({{ cartItemCount }})</button>
   </header>
 </template>
 
@@ -16,6 +14,7 @@ export default {
   },
   methods: {
     toggleCart() {
+      // Emitting an event upwards to the parent component to handle the cart visibility toggle
       this.$emit("toggle-cart");
     },
   },
@@ -23,38 +22,32 @@ export default {
 </script>
 
 <style scoped>
-/* Add the specific styles for header from styles.css */
-header {
+.site-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 2px;
-  height: 100px;
-  background-color: #ddd0c8;
+  background-color: #f5f5f5; /* Light grey background */
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
 }
 
-h1 {
-  font-size: 50px;
-  font-weight: bold;
-  color: #712626;
+.site-header h1 {
+  margin: 0;
+  color: #333; /* Dark grey color for the text */
+  font-family: "Arial", sans-serif; /* Arial font with sans-serif as the fallback */
 }
 
 button {
-  padding: 8px 20px;
+  padding: 10px 15px;
   border: none;
-  background-color: #2a2a2a;
-  color: white;
-  transition: background-color 0.6s ease;
-  border-radius: 50px;
+  border-radius: 5px;
+  background-color: #008cba; /* Blue background */
+  color: white; /* White text */
   cursor: pointer;
+  transition: background-color 0.3s ease; /* Smooth transition for the background color */
 }
 
 button:hover {
-  background-color: #676767;
-}
-
-button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+  background-color: #005f75; /* Darker shade of blue on hover */
 }
 </style>

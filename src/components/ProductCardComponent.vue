@@ -1,14 +1,23 @@
 <template>
   <div class="product-card">
-    <img :src="product.image" :alt="product.title" />
-    <h2>{{ product.title }}</h2>
-    <p>Location: {{ product.location }}</p>
-    <p>Price: £{{ product.price }}</p>
-    <p>Spaces: {{ product.availableInventory }}</p>
-    <button @click="addToCart" :disabled="product.availableInventory === 0">
-      Add to Cart
-    </button>
-    <p v-if="product.availableInventory === 0">Sold Out</p>
+    <img :src="product.image" :alt="product.title" class="product-image" />
+    <div class="product-info">
+      <h3>{{ product.title }}</h3>
+      <p>{{ product.description }}</p>
+      <div class="product-meta">
+        <span class="product-price">£{{ product.price }}</span>
+        <span class="product-inventory"
+          >Available: {{ product.availableInventory }}</span
+        >
+      </div>
+      <button
+        @click="addToCart"
+        :disabled="product.availableInventory === 0"
+        class="add-to-cart-btn"
+      >
+        Add to Cart
+      </button>
+    </div>
   </div>
 </template>
 
@@ -16,59 +25,78 @@
 export default {
   name: "ProductCardComponent",
   props: {
-    product: Object,
+    product: {
+      type: Object,
+      required: true,
+    },
   },
   methods: {
     addToCart() {
-      if (this.product.availableInventory > 0) {
-        this.$emit("add-to-cart", this.product);
-      }
+      this.$emit("add-to-cart", this.product);
     },
   },
 };
 </script>
 
 <style scoped>
-/* Product card styles from styles.css */
 .product-card {
-  border: 1px solid #ccc;
-  padding: 20px;
-  margin-top: 90px;
-  margin-left: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  border: 1px solid #e1e1e1;
   border-radius: 8px;
-  background-color: #fff;
-  max-width: 250px;
-  color: #712626;
-  display: inline-block;
-  text-align: center;
+  overflow: hidden;
+  margin-bottom: 20px;
+  background: #fff;
 }
 
-.product-card img {
-  max-width: 100%;
+.product-image {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
 }
 
-button {
-  padding: 8px 20px;
+.product-info {
+  padding: 10px;
+  flex-grow: 1;
+}
+
+.product-info h3 {
+  margin-top: 0;
+}
+
+.product-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-top: 10px;
+}
+
+.product-price {
+  font-weight: bold;
+  color: #333;
+}
+
+.product-inventory {
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.add-to-cart-btn {
+  padding: 10px 15px;
+  background-color: #007bff;
   border: none;
-  background-color: #2a2a2a;
+  border-radius: 4px;
   color: white;
-  transition: background-color 0.6s ease;
-  border-radius: 50px;
   cursor: pointer;
+  margin-top: 15px;
+  transition: background-color 0.3s ease;
 }
 
-button:hover {
-  background-color: #676767;
+.add-to-cart-btn:hover {
+  background-color: #0056b3;
 }
 
-button:disabled {
-  background-color: #ccc;
+.add-to-cart-btn:disabled {
+  background-color: #cccccc;
   cursor: not-allowed;
-}
-
-p {
-  margin: 5px 0;
 }
 </style>
