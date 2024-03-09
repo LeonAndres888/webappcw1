@@ -101,3 +101,4 @@ export default {
 <style>
 /* Global styles */
 </style>
+./components/LessonComponent.vue ./components/CheckoutComponent.vue
