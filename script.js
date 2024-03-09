@@ -1,21 +1,41 @@
+// Check if Service Workers are supported
+if ("serviceWorker" in navigator) {
+  // Use the window load event to keep the page load performant
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js").then(
+      (registration) => {
+        // Registration was successful
+        console.log(
+          "ServiceWorker registration successful with scope: ",
+          registration.scope
+        );
+      },
+      (err) => {
+        // registration failed :(
+        console.log("ServiceWorker registration failed: ", err);
+      }
+    );
+  });
+}
+
 // Creates new Vue instance
 const webstore = new Vue({
   el: "#app",
-  data: function() {
-return {
-    // Data properties
-    sitename: "👨‍🎓 STUDY SESSION STORE 👩‍🎓",
-    showProduct: true,
-    products: [],
-    cart: [],
-    searchLesson: "",
-    sortAttribute: "title",
-    sortOrder: "",
-    custName: "",
-    custPhone: "",
-    orderSubmitted: false,
-  };
-},
+  data: function () {
+    return {
+      // Data properties
+      sitename: "👨‍🎓 STUDY SESSION STORE 👩‍🎓",
+      showProduct: true,
+      products: [],
+      cart: [],
+      searchLesson: "",
+      sortAttribute: "title",
+      sortOrder: "",
+      custName: "",
+      custPhone: "",
+      orderSubmitted: false,
+    };
+  },
   computed: {
     // Computed properties for filtering and sorting the product list
     filteredProducts() {
