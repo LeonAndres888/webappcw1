@@ -165,6 +165,7 @@ figure img {
 
 .product-card {
   border: 1px solid #ccc;
+  margin-right: 20px;
   padding: 20px;
   margin-bottom: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -174,7 +175,6 @@ figure img {
   color: #712626;
   display: inline-block;
   text-align: center;
-  margin-right: 20px;
 }
 
 .product-card figure {
