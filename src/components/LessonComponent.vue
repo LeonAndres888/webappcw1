@@ -1,37 +1,5 @@
 <template>
   <div>
-    <!-- Search input -->
-    <input
-      type="text"
-      :value="searchLesson"
-      @input="$emit('update:searchLesson', $event.target.value)"
-      placeholder="Search lessons..."
-      class="search-bar"
-    />
-
-    <!-- Dropdown for sorting -->
-    <select
-      :value="sortAttribute"
-      @change="$emit('update:sortAttribute', $event.target.value)"
-      class="drop-down"
-    >
-      <option value="title">Subject</option>
-      <option value="location">Location</option>
-      <option value="price">Price</option>
-      <option value="availableInventory">Spaces</option>
-    </select>
-
-    <!-- Sorting buttons -->
-    <button @click="$emit('update-sort-order', 'ascending')" class="asc-button">
-      Ascending
-    </button>
-    <button
-      @click="$emit('update-sort-order', 'descending')"
-      class="dsc-button"
-    >
-      Descending
-    </button>
-
     <!-- Lesson cards displayed -->
     <div
       v-for="product in sortedProducts"
