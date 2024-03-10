@@ -73,8 +73,12 @@ export default {
       });
     },
   },
+  methods: {
+    updateSortOrder(order) {
+      this.$emit("update-sort-order", order);
+    },
+  },
 };
-methods:
 </script>
 
 <style scoped>
