@@ -1,5 +1,26 @@
 <template>
   <div>
+    <!-- Search input -->
+    <input
+      type="text"
+      v-model="searchLesson"
+      placeholder="Search lessons..."
+      class="search-bar"
+    />
+    <!-- Sorting buttons -->
+    <button @click="updateSortOrder('ascending')" class="asc-button">
+      Ascending
+    </button>
+    <button @click="updateSortOrder('descending')" class="dsc-button">
+      Descending
+    </button>
+    <!-- Dropdown for sorting -->
+    <select v-model="sortAttribute" class="drop-down">
+      <option value="title">Subject</option>
+      <option value="location">Location</option>
+      <option value="price">Price</option>
+      <option value="availableInventory">Spaces</option>
+    </select>
     <!-- Lesson cards displayed -->
     <div
       v-for="product in sortedProducts"
