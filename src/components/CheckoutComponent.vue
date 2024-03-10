@@ -3,16 +3,14 @@
     <h1>Shopping Cart</h1>
     <div v-if="cart.length > 0">
       <ul class="cart-list">
-        <li v-for="item in cart" :key="item.id" class="cart-item">
-          <span
-            >{{ item.title }} - {{ item.location }} - £{{ item.price }}</span
-          >
+        <li v-for="(item, index) in cart" :key="index" class="cart-item">
+          {{ item.title }} - {{ item.location }} - £{{ item.price }}
           <button class="remove-btn" @click="removeItemFromCart(item)">
             Remove
           </button>
         </li>
       </ul>
-      <form class="checkout-form" @submit.prevent="checkOut">
+      <form class="checkout-form" @submit.prevent="submitOrder">
         <input type="text" v-model="custName" placeholder="Name" required />
         <input
           type="text"
@@ -53,29 +51,22 @@ export default {
   },
   methods: {
     removeItemFromCart(item) {
-      // Emitting an event to parent for removing item from the cart
       this.$emit("remove-item-from-cart", item);
     },
-    checkOut() {
-      if (!this.validCheckout) return; // Ensuring name and phone are valid
-
-      // Preparing the order object
-      const order = {
+    submitOrder() {
+      if (!this.validCheckout) {
+        alert("Please enter valid name and phone number.");
+        return;
+      }
+      this.$emit("submit-order", {
         name: this.custName,
         phone: this.custPhone,
-        items: this.cart.map((item) => ({
-          lessonId: item.id,
-          quantity: item.quantity,
-        })),
-      };
-
-      // Emitting an event to the parent to handle the order submission
-      this.$emit("submit-order", order);
-
-      // Resetting form fields and indicating order submission
+        items: this.cart,
+      });
+      this.orderSubmitted = true;
+      // Reset form fields after submission
       this.custName = "";
       this.custPhone = "";
-      this.orderSubmitted = true;
     },
   },
 };
