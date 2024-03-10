@@ -13,7 +13,7 @@
     <select
       :value="sortAttribute"
       @change="$emit('update:sortAttribute', $event.target.value)"
-      class="drop-down"
+      class="dropDown"
     >
       <option value="title">Subject</option>
       <option value="location">Location</option>
@@ -131,6 +131,15 @@ figure img {
   height: 40px;
   border-radius: 10px;
   margin-bottom: 20px;
+}
+#dropDown {
+  border-radius: 5px;
+  height: 30px;
+  width: 110px;
+  margin-right: 40px;
+  position: absolute;
+  left: 500px;
+  top: 140px;
 }
 
 .product-card {
