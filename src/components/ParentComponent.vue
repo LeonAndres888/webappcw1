@@ -252,30 +252,5 @@ button:disabled {
 }
 
 
-#ascButton {
-  border-radius: 5px;
-  height: 30px;
-  width: 110px;
-  margin-right: 40px;
-  position: absolute;
-  left: 230px;
-  top: 140px;
-}
-#dscButton {
-  border-radius: 5px;
-  height: 30px;
-  width: 110px;
-  position: absolute;
-  left: 350px;
-  top: 140px;
-}
-#dropDown {
-  border-radius: 5px;
-  height: 30px;
-  width: 110px;
-  margin-right: 40px;
-  position: absolute;
-  left: 500px;
-  top: 140px;
-}
+
 </style>

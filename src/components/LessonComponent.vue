@@ -138,6 +138,15 @@ figure img {
   margin-bottom: 20px;
 }
 
+#dropDown {
+  border-radius: 5px;
+  height: 30px;
+  width: 110px;
+  margin-right: 40px;
+  position: absolute;
+  left: 500px;
+  top: 140px;
+}
 .drop-down {
   border-radius: 5px;
   height: 30px;
