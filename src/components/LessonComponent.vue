@@ -28,7 +28,7 @@
       <select
         v-model="localSortAttribute"
         @change="updateSortAttribute"
-        class="drop-down"
+        class="dropDown"
       >
         <option value="title">Subject</option>
         <option value="location">Location</option>
@@ -143,9 +143,14 @@ export default {
   background-color: #e74c3c;
 }
 
-.drop-down {
-  height: 40px;
-  border-radius: 10px;
+#dropDown {
+  border-radius: 5px;
+  height: 30px;
+  width: 110px;
+  margin-right: 40px;
+  position: absolute;
+  left: 500px;
+  top: 140px;
 }
 
 .product-card {
