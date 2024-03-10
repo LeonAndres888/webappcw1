@@ -1,45 +1,29 @@
 <template>
   <div>
     <!-- Search input -->
-    <div class="search-sort-container">
-      <input
-        type="text"
-        v-model="localSearchLesson"
-        @input="updateSearchLesson"
-        placeholder="Search lessons..."
-        class="search-bar"
-      />
-
-      <!-- Sorting buttons -->
-      <button
-        @click="updateSortOrder('ascending')"
-        class="sort-button asc-button"
-      >
-        Ascending
-      </button>
-      <button
-        @click="updateSortOrder('descending')"
-        class="sort-button dsc-button"
-      >
-        Descending
-      </button>
-
-      <!-- Dropdown for sorting -->
-      <select
-        v-model="localSortAttribute"
-        @change="updateSortAttribute"
-        class="dropDown"
-      >
-        <option value="title">Subject</option>
-        <option value="location">Location</option>
-        <option value="price">Price</option>
-        <option value="availableInventory">Spaces</option>
-      </select>
-    </div>
-
+    <input
+      type="text"
+      v-model="searchLesson"
+      placeholder="Search lessons..."
+      class="search-bar"
+    />
+    <!-- Sorting buttons -->
+    <button @click="updateSortOrder('ascending')" class="asc-button">
+      Ascending
+    </button>
+    <button @click="updateSortOrder('descending')" class="dsc-button">
+      Descending
+    </button>
+    <!-- Dropdown for sorting -->
+    <select v-model="sortAttribute" class="drop-down">
+      <option value="title">Subject</option>
+      <option value="location">Location</option>
+      <option value="price">Price</option>
+      <option value="availableInventory">Spaces</option>
+    </select>
     <!-- Lesson cards displayed -->
     <div
-      v-for="product in sortedAndFilteredProducts"
+      v-for="product in sortedProducts"
       :key="product.id"
       class="product-card"
     >
@@ -53,7 +37,6 @@
       <button
         @click="$emit('add-item-to-cart', product)"
         :disabled="product.availableInventory === 0"
-        class="add-to-cart-button"
       >
         Add to Cart
       </button>
@@ -64,25 +47,31 @@
 
 <script>
 export default {
-  props: ["products", "searchLesson", "sortAttribute", "sortOrder"],
+  props: {
+    products: Array,
+    // Removed 'searchLesson' and 'sortAttribute' because we shouldn't mutate props directly.
+    sortOrder: String,
+  },
   data() {
     return {
-      localSearchLesson: this.searchLesson,
+      // Moved the searchLesson and sortAttribute to the component's data
+      localSearch: this.searchLesson,
       localSortAttribute: this.sortAttribute,
     };
   },
   computed: {
-    sortedAndFilteredProducts() {
-      const searchTerm = this.localSearchLesson.trim().toLowerCase();
-      const filteredProducts = this.products.filter((product) => {
+    filteredProducts() {
+      let searchTerm = this.localSearch.trim().toLowerCase();
+      return this.products.filter((product) => {
         return (
           product.title.toLowerCase().includes(searchTerm) ||
           product.location.toLowerCase().includes(searchTerm)
         );
       });
-
-      const modifier = this.sortOrder === "ascending" ? 1 : -1;
-      return filteredProducts.slice().sort((a, b) => {
+    },
+    sortedProducts() {
+      let modifier = this.sortOrder === "ascending" ? 1 : -1;
+      return this.filteredProducts.slice().sort((a, b) => {
         if (
           this.localSortAttribute === "price" ||
           this.localSortAttribute === "availableInventory"
@@ -99,48 +88,78 @@ export default {
     },
   },
   methods: {
-    updateSearchLesson(event) {
-      this.localSearchLesson = event.target.value;
-      this.$emit("update:searchLesson", this.localSearchLesson);
-    },
-    updateSortAttribute(event) {
-      this.localSortAttribute = event.target.value;
-      this.$emit("update:sortAttribute", this.localSortAttribute);
-    },
     updateSortOrder(order) {
+      // Emitting an event for the parent to update the sortOrder
       this.$emit("update-sort-order", order);
+    },
+  },
+  // Watching the prop to update the local data value
+  watch: {
+    searchLesson(newVal) {
+      this.localSearch = newVal;
+    },
+    sortAttribute(newVal) {
+      this.localSortAttribute = newVal;
     },
   },
 };
 </script>
 
 <style scoped>
-.search-sort-container {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
+body {
+  font-family: "Times New Roman", Times, serif;
+  background-color: #ddd0c8;
 }
 
+header {
+  display: flex;
+  justify-content: center;
+  font-family: "Times New Roman", Times, serif;
+  padding: 2px;
+  height: 100px;
+}
+
+button {
+  padding: 8px 20px;
+  border: none;
+  background-color: #2a2a2a;
+  color: #ffffff;
+  transition: background-color 0.6s ease;
+  border-radius: 50px;
+  cursor: pointer;
+}
+
+#titlename {
+  font-size: 50px;
+  font-weight: bold;
+  color: #712626;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #676767;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+main {
+  padding: 5px;
+  align-items: center;
+  text-align: center;
+}
+
+figure img {
+  width: 40px;
+  max-width: 300px;
+}
 .search-bar {
   width: 200px;
   height: 40px;
   border-radius: 10px;
-  padding: 0 10px;
-}
-
-.sort-button {
-  padding: 8px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.asc-button {
-  background-color: #2ecc71;
-}
-
-.dsc-button {
-  background-color: #e74c3c;
+  margin-bottom: 20px;
 }
 
 #dropDown {
@@ -152,17 +171,35 @@ export default {
   left: 500px;
   top: 140px;
 }
+.drop-down {
+  border-radius: 5px;
+  height: 30px;
+  width: 110px;
+  margin-right: 20px;
+}
+
+.asc-button,
+.dsc-button {
+  border-radius: 5px;
+  height: 30px;
+  width: 110px;
+  margin-right: 10px;
+  background-color: #2a2a2a;
+  color: #ffffff;
+  cursor: pointer;
+}
 
 .product-card {
   border: 1px solid #ccc;
   margin-right: 20px;
+
   padding: 20px;
   margin-bottom: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   background-color: #fff;
   max-width: 250px;
-  color: #333;
+  color: #712626;
   display: inline-block;
   text-align: center;
 }
@@ -177,26 +214,8 @@ export default {
   height: auto;
 }
 
-.add-to-cart-button {
-  background-color: #3498db;
-  color: #ffffff;
-  cursor: pointer;
-  border-radius: 5px;
-  padding: 10px 15px;
-  margin-top: 10px;
-}
-
-.add-to-cart-button:hover {
-  background-color: #2980b9;
-}
-
-.add-to-cart-button:disabled {
-  background-color: #95a5a6;
-  cursor: not-allowed;
-}
-
 .sold-out {
-  color: #c0392b;
   font-weight: bold;
+  color: red;
 }
 </style>
