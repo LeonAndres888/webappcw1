@@ -1,14 +1,5 @@
 <template>
   <div>
-    <!-- Search input -->
-    <input
-      type="text"
-      :value="searchLesson"
-      @input="$emit('update:searchLesson', $event.target.value)"
-      placeholder="Search lessons..."
-      class="search-bar"
-    />
-
     <!-- Dropdown for sorting -->
     <select
       :value="sortAttribute"
