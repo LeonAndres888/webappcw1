@@ -49,13 +49,19 @@
 export default {
   props: {
     products: Array,
-    searchLesson: String,
-    sortAttribute: String,
+    // Removed 'searchLesson' and 'sortAttribute' because we shouldn't mutate props directly.
     sortOrder: String,
+  },
+  data() {
+    return {
+      // Moved the searchLesson and sortAttribute to the component's data
+      localSearch: this.searchLesson,
+      localSortAttribute: this.sortAttribute,
+    };
   },
   computed: {
     filteredProducts() {
-      let searchTerm = this.searchLesson.trim().toLowerCase();
+      let searchTerm = this.localSearch.trim().toLowerCase();
       return this.products.filter((product) => {
         return (
           product.title.toLowerCase().includes(searchTerm) ||
@@ -67,34 +73,33 @@ export default {
       let modifier = this.sortOrder === "ascending" ? 1 : -1;
       return this.filteredProducts.slice().sort((a, b) => {
         if (
-          this.sortAttribute === "price" ||
-          this.sortAttribute === "availableInventory"
+          this.localSortAttribute === "price" ||
+          this.localSortAttribute === "availableInventory"
         ) {
-          return (a[this.sortAttribute] - b[this.sortAttribute]) * modifier;
+          return (
+            (a[this.localSortAttribute] - b[this.localSortAttribute]) * modifier
+          );
         }
         return (
-          a[this.sortAttribute].localeCompare(b[this.sortAttribute]) * modifier
+          a[this.localSortAttribute].localeCompare(b[this.localSortAttribute]) *
+          modifier
         );
       });
     },
   },
   methods: {
-    updateSearchLesson(value) {
-      this.$emit("update:searchLesson", value);
-    },
-    updateSortAttribute(value) {
-      this.$emit("update:sortAttribute", value);
-    },
     updateSortOrder(order) {
-      this.$emit("update:sortOrder", order);
+      // Emitting an event for the parent to update the sortOrder
+      this.$emit("update-sort-order", order);
     },
   },
+  // Watching the prop to update the local data value
   watch: {
     searchLesson(newVal) {
-      this.updateSearchLesson(newVal);
+      this.localSearch = newVal;
     },
     sortAttribute(newVal) {
-      this.updateSortAttribute(newVal);
+      this.localSortAttribute = newVal;
     },
   },
 };
