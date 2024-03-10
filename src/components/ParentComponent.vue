@@ -9,8 +9,11 @@
     <main>
       <lesson-component
         v-if="showProduct"
-        :lessons="products"
-        @add-to-cart="addItemToCart"
+        :products="products"
+        @add-item-to-cart="addItemCart"
+        :searchLesson="searchLesson"
+        :sortAttribute="sortAttribute"
+        :sortOrder="sortOrder"
         @update:searchLesson="searchLesson = $event"
         @update:sortAttribute="sortAttribute = $event"
         @update-sort-order="sortOrder = $event"
@@ -18,7 +21,10 @@
       <checkout-component
         v-else
         :cart="cart"
-        @remove-from-cart="removeItemFromCart"
+        @remove-item-from-cart="removeItemCart"
+        :validCheckout="validCheckout"
+        :orderSubmitted="orderSubmitted"
+        @submit-order="submitOrder"
       />
     </main>
   </div>
@@ -233,5 +239,40 @@ button:hover {
 button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
+}
+#searchBar {
+  width: 200px;
+  height: 40px;
+  border-radius: 10px;
+  position: absolute;
+  top: 130px;
+  left: 660px;
+}
+
+#ascButton {
+  border-radius: 5px;
+  height: 30px;
+  width: 110px;
+  margin-right: 40px;
+  position: absolute;
+  left: 230px;
+  top: 140px;
+}
+#dscButton {
+  border-radius: 5px;
+  height: 30px;
+  width: 110px;
+  position: absolute;
+  left: 350px;
+  top: 140px;
+}
+#dropDown {
+  border-radius: 5px;
+  height: 30px;
+  width: 110px;
+  margin-right: 40px;
+  position: absolute;
+  left: 500px;
+  top: 140px;
 }
 </style>

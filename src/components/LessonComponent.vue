@@ -3,24 +3,16 @@
     <!-- Search input -->
     <input
       type="text"
-      :value="localSearchLesson"
-      @input="updateSearchLesson($event.target.value)"
+      :value="searchLesson"
+      @input="$emit('update:searchLesson', $event.target.value)"
       placeholder="Search lessons..."
       class="search-bar"
     />
 
-    <!-- Sorting buttons -->
-    <button @click="updateSortOrder('ascending')" class="asc-button">
-      Ascending
-    </button>
-    <button @click="updateSortOrder('descending')" class="dsc-button">
-      Descending
-    </button>
-
     <!-- Dropdown for sorting -->
     <select
-      :value="localSortAttribute"
-      @change="updateSortAttribute($event.target.value)"
+      :value="sortAttribute"
+      @change="$emit('update:sortAttribute', $event.target.value)"
       class="drop-down"
     >
       <option value="title">Subject</option>
@@ -55,56 +47,30 @@
 
 <script>
 export default {
-  props: {
-    products: Array,
-    searchLesson: String,
-    sortAttribute: String,
-    sortOrder: String,
-  },
-  data() {
-    return {
-      localSearchLesson: this.searchLesson,
-      localSortAttribute: this.sortAttribute,
-    };
-  },
+  props: ["products", "searchLesson", "sortAttribute", "sortOrder"],
   computed: {
     filteredProducts() {
-      const searchTerm = this.localSearchLesson.trim().toLowerCase();
-      return this.products.filter(
-        (product) =>
+      let searchTerm = this.searchLesson.trim().toLowerCase();
+      return this.products.filter((product) => {
+        return (
           product.title.toLowerCase().includes(searchTerm) ||
           product.location.toLowerCase().includes(searchTerm)
-      );
-    },
-    sortedProducts() {
-      return this.filteredProducts.sort((a, b) => {
-        const modifier = this.sortOrder === "ascending" ? 1 : -1;
-        if (
-          this.localSortAttribute === "price" ||
-          this.localSortAttribute === "availableInventory"
-        ) {
-          return (
-            (a[this.localSortAttribute] - b[this.localSortAttribute]) * modifier
-          );
-        }
-        return (
-          a[this.localSortAttribute].localeCompare(b[this.localSortAttribute]) *
-          modifier
         );
       });
     },
-  },
-  methods: {
-    updateSearchLesson(value) {
-      this.localSearchLesson = value;
-      this.$emit("update:searchLesson", value);
-    },
-    updateSortAttribute(value) {
-      this.localSortAttribute = value;
-      this.$emit("update:sortAttribute", value);
-    },
-    updateSortOrder(order) {
-      this.$emit("update-sort-order", order);
+    sortedProducts() {
+      let modifier = this.sortOrder === "ascending" ? 1 : -1;
+      return this.filteredProducts.slice().sort((a, b) => {
+        if (
+          this.sortAttribute === "price" ||
+          this.sortAttribute === "availableInventory"
+        ) {
+          return (a[this.sortAttribute] - b[this.sortAttribute]) * modifier;
+        }
+        return (
+          a[this.sortAttribute].localeCompare(b[this.sortAttribute]) * modifier
+        );
+      });
     },
   },
 };
@@ -167,37 +133,9 @@ figure img {
   margin-bottom: 20px;
 }
 
-#dropDown {
-  border-radius: 5px;
-  height: 30px;
-  width: 110px;
-  margin-right: 40px;
-  position: absolute;
-  left: 500px;
-  top: 140px;
-}
-.drop-down {
-  border-radius: 5px;
-  height: 30px;
-  width: 110px;
-  margin-right: 20px;
-}
-
-.asc-button,
-.dsc-button {
-  border-radius: 5px;
-  height: 30px;
-  width: 110px;
-  margin-right: 10px;
-  background-color: #2a2a2a;
-  color: #ffffff;
-  cursor: pointer;
-}
-
 .product-card {
   border: 1px solid #ccc;
   margin-right: 20px;
-
   padding: 20px;
   margin-bottom: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
