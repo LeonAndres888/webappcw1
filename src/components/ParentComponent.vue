@@ -77,19 +77,32 @@ export default {
           console.error("Error fetching lessons:", error);
         });
     },
-    async submitOrder(orderDetails) {
-      // Construct the order payload
+    async submitOrder() {
+      if (!this.validCheckout) {
+        alert("Please ensure all fields are filled out correctly.");
+        return;
+      }
+
+      // Validate cart items have valid lesson IDs
+      for (const item of this.cart) {
+        if (!item.id) {
+          console.error("Invalid lesson ID found in cart items:", item);
+          alert("An error occurred with the cart items. Please try again.");
+          return;
+        }
+      }
+
+      // Construct the order payload with validated lesson IDs
       const orderPayload = {
-        name: orderDetails.name,
-        phoneNumber: orderDetails.phone,
+        name: this.custName,
+        phoneNumber: this.custPhone,
         items: this.cart.map((item) => ({
-          lessonId: item.id, // Ensure this matches your cart item structure
+          lessonId: item.id, // assuming 'id' is the correct property
           quantity: item.quantity,
         })),
       };
 
       try {
-        // Submit the order
         const response = await fetch(
           "https://storefinal-env.eba-vfsgptpf.us-east-1.elasticbeanstalk.com/api/orders",
           {
@@ -101,17 +114,23 @@ export default {
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.message || "Failed to submit order");
+          throw new Error(errorData.message || "Failed to submit order.");
         }
 
-        console.log("Order submitted successfully");
-        await this.updateLessonSpaces(this.cart, true); // Update lesson spaces after successful order submission
+        const data = await response.json();
+        console.log("Order submitted successfully:", data);
 
-        this.orderSubmitted = true; // Flag the order as submitted
-        this.cart = []; // Clear the cart
+        // If the order submission was successful, proceed with updating lesson spaces
+        await this.updateLessonSpaces(orderPayload.items, true);
+
+        this.orderSubmitted = true;
+        this.cart = []; // Clear the cart after successful order submission
+        alert("Order has been successfully submitted.");
       } catch (error) {
         console.error("Order submission failed:", error);
-        alert("Failed to submit order, please try again.");
+        alert(
+          "Failed to submit the order. Please check the details and try again."
+        );
       }
     },
     async updateLessonSpaces(orderedItems, isOrderSubmitted) {
@@ -125,9 +144,10 @@ export default {
       try {
         await Promise.all(
           orderedItems.map(async (item) => {
-            if (!item.lessonId) {
+            // Validate lessonId format (basic example, adjust as needed)
+            if (!item.lessonId || !/^[a-f\d]{24}$/i.test(item.lessonId)) {
               throw new Error(
-                `Lesson ID is undefined for item: ${JSON.stringify(item)}`
+                `Invalid lesson ID format for item: ${JSON.stringify(item)}`
               );
             }
 
@@ -152,9 +172,10 @@ export default {
           })
         );
 
-        this.fetchLessons(); // Optionally refresh the lessons list
+        // Optionally, refresh the lessons list
+        this.fetchLessons();
       } catch (error) {
-        console.error("Failed to update lesson spaces:", error);
+        console.error("Failed to update lesson spaces:", error.message);
         alert(
           "Failed to update lesson availability, some data might be outdated."
         );
