@@ -11,12 +11,6 @@
         v-if="showProduct"
         :products="products"
         @add-item-to-cart="addItemCart"
-        :searchLesson="searchLesson"
-        :sortAttribute="sortAttribute"
-        :sortOrder="sortOrder"
-        @update:searchLesson="searchLesson = $event"
-        @update:sortAttribute="sortAttribute = $event"
-        @update-sort-order="sortOrder = $event"
       />
       <checkout-component
         v-else
