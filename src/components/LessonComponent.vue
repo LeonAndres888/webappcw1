@@ -62,7 +62,7 @@ export default {
   computed: {
     filteredProducts() {
       let searchTerm = this.localSearch.trim().toLowerCase();
-      return this.products.filter((product) => {
+      return this.products.filter(product => {
         return (
           product.title.toLowerCase().includes(searchTerm) ||
           product.location.toLowerCase().includes(searchTerm)
@@ -76,13 +76,10 @@ export default {
           this.localSortAttribute === "price" ||
           this.localSortAttribute === "availableInventory"
         ) {
-          return (
-            (a[this.localSortAttribute] - b[this.localSortAttribute]) * modifier
-          );
+          return (a[this.localSortAttribute] - b[this.localSortAttribute]) * modifier;
         }
         return (
-          a[this.localSortAttribute].localeCompare(b[this.localSortAttribute]) *
-          modifier
+          a[this.localSortAttribute].localeCompare(b[this.localSortAttribute]) * modifier
         );
       });
     },
@@ -104,6 +101,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 body {

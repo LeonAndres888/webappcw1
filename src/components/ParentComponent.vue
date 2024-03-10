@@ -10,13 +10,10 @@
       <lesson-component
         v-if="showProduct"
         :lessons="products"
-        :searchLesson="searchLesson"
-        :sortAttribute="sortAttribute"
-        :sortOrder="sortOrder"
         @add-to-cart="addItemToCart"
-        @update:searchLesson="updateSearchLesson"
-        @update:sortAttribute="updateSortAttribute"
-        @update-sort-order="updateSortOrder"
+        @update:searchLesson="searchLesson = $event"
+        @update:sortAttribute="sortAttribute = $event"
+        @update-sort-order="sortOrder = $event"
       />
       <checkout-component
         v-else
