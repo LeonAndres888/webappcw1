@@ -85,9 +85,59 @@ export default {
     },
   },
 };
+methods:
 </script>
 
 <style scoped>
+body {
+  font-family: "Times New Roman", Times, serif;
+  background-color: #ddd0c8;
+}
+
+header {
+  display: flex;
+  justify-content: center;
+  font-family: "Times New Roman", Times, serif;
+  padding: 2px;
+  height: 100px;
+}
+
+button {
+  padding: 8px 20px;
+  border: none;
+  background-color: #2a2a2a;
+  color: #ffffff;
+  transition: background-color 0.6s ease;
+  border-radius: 50px;
+  cursor: pointer;
+}
+
+#titlename {
+  font-size: 50px;
+  font-weight: bold;
+  color: #712626;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #676767;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+main {
+  padding: 5px;
+  align-items: center;
+  text-align: center;
+}
+
+figure img {
+  width: 40px;
+  max-width: 300px;
+}
 .search-bar {
   width: 200px;
   height: 40px;

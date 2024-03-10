@@ -77,12 +77,7 @@ export default {
         });
     },
     submitOrder() {
-      if (!this.validCheckout) {
-        alert(
-          "Please enter a valid name and phone number to submit the order."
-        );
-        return;
-      }
+      // Submits user's order to the server and handles the response
       const order = {
         name: this.custName,
         phoneNumber: this.custPhone,
@@ -91,7 +86,10 @@ export default {
           quantity: item.quantity,
         })),
       };
+
+      // Log order items to the console before submitting
       console.log("Order items before submitting:", order.items);
+
       fetch(
         "https://storefinal-env.eba-vfsgptpf.us-east-1.elasticbeanstalk.com/api/orders",
         {
@@ -111,12 +109,11 @@ export default {
         .then((data) => {
           this.orderSubmitted = true;
           console.log("Order submitted:", data);
-          this.cart = [];
-          this.custName = "";
-          this.custPhone = "";
+          // Call updateLessonSpaces with a new parameter to indicate order submission
           return this.updateLessonSpaces(order.items, true);
         })
         .then(() => {
+          // Re-fetch lessons to update the local state with new data from the server
           this.fetchLessons();
         })
         .catch((error) => {
@@ -124,9 +121,11 @@ export default {
         });
     },
     updateLessonSpaces(orderedItems, isOrderSubmitted = false) {
+      // Updates available space in lessons after an order is submitted
       if (!isOrderSubmitted) {
         return Promise.resolve();
       }
+
       const updatePromises = orderedItems.map((item) => {
         return fetch(
           `https://storefinal-env.eba-vfsgptpf.us-east-1.elasticbeanstalk.com/api/lessons/${item.lessonId}`,
@@ -144,45 +143,58 @@ export default {
           return response.json();
         });
       });
+
       return Promise.all(updatePromises)
         .then(() => {
-          this.fetchLessons();
+          this.fetchLessons(); // Fetch the updated lessons data
         })
         .catch((error) => {
           console.error("Error updating lessons:", error);
         });
     },
     canAddToCart(product) {
-      const cartItem = this.cart.find((item) => item.id === product.id);
-      return cartItem
-        ? cartItem.quantity < product.availableInventory
-        : product.availableInventory > 0;
+      // Check if product can be added to cart
+      let cartItem = this.cart.find((item) => item.id === product.id);
+      let cartItemCount = cartItem ? cartItem.quantity : 0;
+      return product.availableInventory > cartItemCount;
     },
-    addItemCart(product) {
-      if (!this.canAddToCart(product)) {
-        alert("This lesson cannot be added to the cart.");
-        return;
+    addItemCart(lesson) {
+      // Check if the lesson can be added to the cart based on available inventory
+      if (lesson.availableInventory <= 0) {
+        alert("This lesson is fully booked.");
+        return; // Exit the function if no inventory
       }
-      const cartItem = this.cart.find((item) => item.id === product.id);
+
+      // Decrease the available inventory by 1
+      lesson.availableInventory--;
+
+      // Add the lesson to the cart
+      let cartItem = this.cart.find((item) => item.id === lesson.id);
       if (cartItem) {
         cartItem.quantity++;
       } else {
-        this.cart.push({ ...product, quantity: 1 });
+        this.cart.push({ ...lesson, quantity: 1 });
       }
     },
     updateSortOrder(order) {
+      // Update sorting order based on asc or dsc buttons
       this.sortOrder = order;
     },
     removeItemCart(item) {
-      const cartItemIndex = this.cart.findIndex(
+      let cartItemIndex = this.cart.findIndex(
         (cartItem) => cartItem.id === item.id
       );
       if (cartItemIndex > -1) {
-        const cartItem = this.cart[cartItemIndex];
+        let cartItem = this.cart[cartItemIndex];
         if (cartItem.quantity > 1) {
           cartItem.quantity--;
         } else {
           this.cart.splice(cartItemIndex, 1);
+        }
+        // Increase the available inventory by 1
+        let lesson = this.products.find((lesson) => lesson.id === item.id);
+        if (lesson) {
+          lesson.availableInventory++;
         }
       }
     },
