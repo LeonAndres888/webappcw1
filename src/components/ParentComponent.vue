@@ -97,7 +97,7 @@ export default {
         name: this.custName,
         phoneNumber: this.custPhone,
         items: this.cart.map((item) => ({
-          lessonId: item.id, // assuming 'id' is the correct property
+          lessonId: item.lessonId || item.id, // Adjust this line to ensure you use the correct property
           quantity: item.quantity,
         })),
       };
@@ -139,15 +139,16 @@ export default {
       try {
         await Promise.all(
           orderedItems.map(async (item) => {
-            if (!item.lessonId) {
-              console.error("Invalid lessonId:", item);
-              throw new Error(
-                `Invalid lessonId for item: ${JSON.stringify(item)}`
-              );
+            // Check if the lessonId is present and is a valid identifier
+            if (!item.id) {
+              console.error("Invalid or missing lessonId:", item);
+              alert("An error occurred with the cart items. Please try again.");
+              return; // Skip this item
             }
 
+            // Update the PUT request URL to use the correct `item.id`
             const response = await fetch(
-              `https://storefinal-env.eba-vfsgptpf.us-east-1.elasticbeanstalk.com/api/lessons/${item.lessonId}`,
+              `https://storefinal-env.eba-vfsgptpf.us-east-1.elasticbeanstalk.com/api/lessons/${item.id}`,
               {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
@@ -162,7 +163,7 @@ export default {
               );
             }
 
-            console.log(`Lesson space updated for lessonId: ${item.lessonId}`);
+            console.log(`Lesson space updated for lessonId: ${item.id}`);
           })
         );
 
@@ -172,6 +173,7 @@ export default {
         alert("Failed to update lesson spaces. Please try again.");
       }
     },
+
     canAddToCart(product) {
       // Check if product can be added to cart
       let cartItem = this.cart.find((item) => item.id === product.id);
