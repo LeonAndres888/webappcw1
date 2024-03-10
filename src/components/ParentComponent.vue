@@ -11,8 +11,10 @@
         v-if="showProduct"
         :products="products"
         @add-item-to-cart="addItemCart"
+        :searchLesson="searchLesson"
         :sortAttribute="sortAttribute"
         :sortOrder="sortOrder"
+        @update:searchLesson="searchLesson = $event"
         @update:sortAttribute="sortAttribute = $event"
         @update-sort-order="sortOrder = $event"
       />
@@ -221,7 +223,7 @@ button {
   width: 180px;
   position: absolute;
   right: 100px;
-  top: 25px;
+  top: 50px;
 }
 #titlename {
   font-size: 50px;
