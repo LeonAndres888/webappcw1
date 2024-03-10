@@ -132,7 +132,7 @@ figure img {
   border-radius: 10px;
   margin-bottom: 20px;
 }
-#dropDown {
+.dropDown {
   border-radius: 5px;
   height: 30px;
   width: 110px;
