@@ -1,5 +1,14 @@
 <template>
   <div>
+    <!-- Search input -->
+    <input
+      type="text"
+      :value="searchLesson"
+      @input="$emit('update:searchLesson', $event.target.value)"
+      placeholder="Search lessons..."
+      class="search-bar"
+    />
+
     <!-- Dropdown for sorting -->
     <select
       :value="sortAttribute"
@@ -116,6 +125,12 @@ main {
 figure img {
   width: 40px;
   max-width: 300px;
+}
+.search-bar {
+  width: 200px;
+  height: 40px;
+  border-radius: 10px;
+  margin-bottom: 20px;
 }
 
 .product-card {
