@@ -54,6 +54,17 @@ export default {
     };
   },
   computed: {
+    // Computed properties for filtering and sorting the product list
+    filteredProducts() {
+      // Filters and returns products based on search
+      let searchTerm = this.searchLesson.trim().toLowerCase();
+      return this.products.filter((product) => {
+        return (
+          product.title.toLowerCase().includes(searchTerm) ||
+          product.location.toLowerCase().includes(searchTerm)
+        );
+      });
+    },
     cartItemCount() {
       return this.cart.reduce((total, item) => total + item.quantity, 0);
     },
