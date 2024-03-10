@@ -134,20 +134,15 @@ export default {
       }
     },
     async updateLessonSpaces(orderedItems, isOrderSubmitted) {
-      if (!isOrderSubmitted) {
-        console.log(
-          "Order submission flag not set, skipping inventory update."
-        );
-        return;
-      }
+      if (!isOrderSubmitted) return;
 
       try {
         await Promise.all(
           orderedItems.map(async (item) => {
-            // Validate lessonId format (basic example, adjust as needed)
-            if (!item.lessonId || !/^[a-f\d]{24}$/i.test(item.lessonId)) {
+            if (!item.lessonId) {
+              console.error("Invalid lessonId:", item);
               throw new Error(
-                `Invalid lesson ID format for item: ${JSON.stringify(item)}`
+                `Invalid lessonId for item: ${JSON.stringify(item)}`
               );
             }
 
@@ -161,24 +156,20 @@ export default {
             );
 
             if (!response.ok) {
-              const errorData = await response.json();
+              const responseText = await response.text();
               throw new Error(
-                errorData.message ||
-                  `Failed to update lesson availability for ID: ${item.lessonId}`
+                `Failed to update lesson space. Server responded with status ${response.status}: ${responseText}`
               );
             }
 
-            console.log(`Lesson availability updated for ID: ${item.lessonId}`);
+            console.log(`Lesson space updated for lessonId: ${item.lessonId}`);
           })
         );
 
-        // Optionally, refresh the lessons list
-        this.fetchLessons();
+        this.fetchLessons(); // Refresh lessons data
       } catch (error) {
-        console.error("Failed to update lesson spaces:", error.message);
-        alert(
-          "Failed to update lesson availability, some data might be outdated."
-        );
+        console.error("Error updating lesson spaces:", error);
+        alert("Failed to update lesson spaces. Please try again.");
       }
     },
     canAddToCart(product) {
@@ -188,6 +179,7 @@ export default {
       return product.availableInventory > cartItemCount;
     },
     addItemToCart(lesson) {
+      console.log("Adding to cart:", lesson);
       // Check if the lesson can be added to the cart based on available inventory
       if (lesson.availableInventory <= 0) {
         alert("This lesson is fully booked.");
