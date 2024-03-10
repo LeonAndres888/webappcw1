@@ -18,6 +18,7 @@
         @update:sortAttribute="sortAttribute = $event"
         @update-sort-order="sortOrder = $event"
       />
+
       <checkout-component
         v-else
         :cart="cart"
@@ -194,6 +195,15 @@ export default {
 </script>
 
 <style scoped>
+.dropDown {
+  border-radius: 5px;
+  height: 30px;
+  width: 110px;
+  margin-right: 40px;
+  position: absolute;
+  left: 500px;
+  top: 140px;
+}
 button {
   padding: 8px 20px;
   border: none;
