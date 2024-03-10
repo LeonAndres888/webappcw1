@@ -3,10 +3,12 @@
     <!-- Search input -->
     <input
       type="text"
-      v-model="searchLesson"
+      :value="localSearchLesson"
+      @input="updateSearchLesson($event.target.value)"
       placeholder="Search lessons..."
       class="search-bar"
     />
+
     <!-- Sorting buttons -->
     <button @click="updateSortOrder('ascending')" class="asc-button">
       Ascending
@@ -14,13 +16,19 @@
     <button @click="updateSortOrder('descending')" class="dsc-button">
       Descending
     </button>
+
     <!-- Dropdown for sorting -->
-    <select v-model="sortAttribute" class="drop-down">
+    <select
+      :value="localSortAttribute"
+      @change="updateSortAttribute($event.target.value)"
+      class="drop-down"
+    >
       <option value="title">Subject</option>
       <option value="location">Location</option>
       <option value="price">Price</option>
       <option value="availableInventory">Spaces</option>
     </select>
+
     <!-- Lesson cards displayed -->
     <div
       v-for="product in sortedProducts"
@@ -49,59 +57,58 @@
 export default {
   props: {
     products: Array,
-    // Removed 'searchLesson' and 'sortAttribute' because we shouldn't mutate props directly.
+    searchLesson: String,
+    sortAttribute: String,
     sortOrder: String,
   },
   data() {
     return {
-      // Moved the searchLesson and sortAttribute to the component's data
-      localSearch: this.searchLesson,
+      localSearchLesson: this.searchLesson,
       localSortAttribute: this.sortAttribute,
     };
   },
   computed: {
     filteredProducts() {
-      let searchTerm = this.localSearch.trim().toLowerCase();
-      return this.products.filter(product => {
-        return (
+      const searchTerm = this.localSearchLesson.trim().toLowerCase();
+      return this.products.filter(
+        (product) =>
           product.title.toLowerCase().includes(searchTerm) ||
           product.location.toLowerCase().includes(searchTerm)
-        );
-      });
+      );
     },
     sortedProducts() {
-      let modifier = this.sortOrder === "ascending" ? 1 : -1;
-      return this.filteredProducts.slice().sort((a, b) => {
+      return this.filteredProducts.sort((a, b) => {
+        const modifier = this.sortOrder === "ascending" ? 1 : -1;
         if (
           this.localSortAttribute === "price" ||
           this.localSortAttribute === "availableInventory"
         ) {
-          return (a[this.localSortAttribute] - b[this.localSortAttribute]) * modifier;
+          return (
+            (a[this.localSortAttribute] - b[this.localSortAttribute]) * modifier
+          );
         }
         return (
-          a[this.localSortAttribute].localeCompare(b[this.localSortAttribute]) * modifier
+          a[this.localSortAttribute].localeCompare(b[this.localSortAttribute]) *
+          modifier
         );
       });
     },
   },
   methods: {
+    updateSearchLesson(value) {
+      this.localSearchLesson = value;
+      this.$emit("update:searchLesson", value);
+    },
+    updateSortAttribute(value) {
+      this.localSortAttribute = value;
+      this.$emit("update:sortAttribute", value);
+    },
     updateSortOrder(order) {
-      // Emitting an event for the parent to update the sortOrder
       this.$emit("update-sort-order", order);
-    },
-  },
-  // Watching the prop to update the local data value
-  watch: {
-    searchLesson(newVal) {
-      this.localSearch = newVal;
-    },
-    sortAttribute(newVal) {
-      this.localSortAttribute = newVal;
     },
   },
 };
 </script>
-
 
 <style scoped>
 body {
