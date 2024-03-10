@@ -174,6 +174,7 @@ figure img {
   color: #712626;
   display: inline-block;
   text-align: center;
+  margin-right: 20px;
 }
 
 .product-card figure {
@@ -182,8 +183,7 @@ figure img {
 }
 
 .product-card img {
-  width: 100%;
-  max-width: 100%;
+  width: 100px;
   height: auto;
 }
 
