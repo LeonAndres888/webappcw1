@@ -78,11 +78,6 @@ export default {
         });
     },
     async submitOrder(orderDetails) {
-      if (!this.validCheckout) {
-        alert("Please enter valid name and phone number.");
-        return;
-      }
-
       // Construct the order payload
       const orderPayload = {
         name: orderDetails.name,
