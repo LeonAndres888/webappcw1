@@ -46,27 +46,36 @@ export default {
   },
   computed: {
     validCheckout() {
-      return this.custName.trim() !== "" && this.custPhone.trim() !== "";
+      const nameRegex = /^[A-Za-z\s]+$/;
+      const phoneRegex = /^[0-9()-]+$/;
+      return nameRegex.test(this.custName) && phoneRegex.test(this.custPhone);
     },
   },
   methods: {
+    removeItemFromCart(item) {
+      // Emitting an event to parent for removing item from the cart
+      this.$emit("remove-item-from-cart", item);
+    },
     checkOut() {
-      // Assuming this method should submit the form and handle checkout
+      if (!this.validCheckout) return; // Ensuring name and phone are valid
+
+      // Preparing the order object
       const order = {
         name: this.custName,
         phone: this.custPhone,
-        items: this.cart,
+        items: this.cart.map((item) => ({
+          lessonId: item.id,
+          quantity: item.quantity,
+        })),
       };
-      // Emit an event for the parent to handle the actual order submission
-      this.$emit("checkout-order", order);
-      this.orderSubmitted = true; // Simulate order submission
-      // Reset form
+
+      // Emitting an event to the parent to handle the order submission
+      this.$emit("submit-order", order);
+
+      // Resetting form fields and indicating order submission
       this.custName = "";
       this.custPhone = "";
-    },
-    removeItemFromCart(item) {
-      // Emit an event for the parent component to handle item removal
-      this.$emit("remove-item-from-cart", item);
+      this.orderSubmitted = true;
     },
   },
 };
