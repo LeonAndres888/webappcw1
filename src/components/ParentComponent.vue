@@ -77,66 +77,88 @@ export default {
           console.error("Error fetching lessons:", error);
         });
     },
-    submitOrder(orderDetails) {
-      // Validation logic if needed
-      if (!this.validateOrder(orderDetails)) {
-        alert("Invalid order details.");
+    async submitOrder(orderDetails) {
+      if (!this.validCheckout) {
+        alert("Please enter valid name and phone number.");
         return;
       }
 
-      const apiEndpoint =
-        "https://storefinal-env.eba-vfsgptpf.us-east-1.elasticbeanstalk.com/api/orders";
-      fetch(apiEndpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: orderDetails.name,
-          phoneNumber: orderDetails.phone,
-          items: this.cart.map(({ id, quantity }) => ({
-            lessonId: id,
-            quantity,
-          })),
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Order submitted successfully:", data);
-          this.orderSubmitted = true; // Update state as needed
-          this.cart = []; // Clear the cart
-        })
-        .catch((error) => console.error("Order submission failed:", error));
+      // Construct the order payload
+      const orderPayload = {
+        name: orderDetails.name,
+        phoneNumber: orderDetails.phone,
+        items: this.cart.map((item) => ({
+          lessonId: item.id, // Make sure the property names match your schema
+          quantity: item.quantity,
+        })),
+      };
+
+      try {
+        // Submit the order
+        const response = await fetch(
+          "https://storefinal-env.eba-vfsgptpf.us-east-1.elasticbeanstalk.com/api/orders",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(orderPayload),
+          }
+        );
+
+        const data = await response.json();
+        if (!response.ok)
+          throw new Error(data.message || "Failed to submit order");
+
+        console.log("Order submitted successfully:", data);
+
+        // Assuming the order submission was successful, update the lesson availability
+        await this.updateLessonSpaces(this.cart, true);
+
+        this.orderSubmitted = true;
+        this.cart = []; // Clear the cart
+      } catch (error) {
+        console.error("Order submission failed:", error.message);
+        alert("Failed to submit order, please try again.");
+      }
     },
-    updateLessonSpaces(orderedItems, isOrderSubmitted = false) {
-      // Updates available space in lessons after an order is submitted
+    async updateLessonSpaces(orderedItems, isOrderSubmitted) {
       if (!isOrderSubmitted) {
-        return Promise.resolve();
+        console.log(
+          "Order submission flag not set, skipping inventory update."
+        );
+        return;
       }
 
-      const updatePromises = orderedItems.map((item) => {
-        return fetch(
-          `https://storefinal-env.eba-vfsgptpf.us-east-1.elasticbeanstalk.com/api/lessons/${item.lessonId}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ numberToDecrease: item.quantity }),
-          }
-        ).then((response) => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          return response.json();
-        });
-      });
+      try {
+        // Update each lesson's availability in parallel
+        await Promise.all(
+          orderedItems.map(async (item) => {
+            const response = await fetch(
+              `https://storefinal-env.eba-vfsgptpf.us-east-1.elasticbeanstalk.com/api/lessons/${item.lessonId}`,
+              {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ numberToDecrease: item.quantity }),
+              }
+            );
 
-      return Promise.all(updatePromises)
-        .then(() => {
-          this.fetchLessons(); // Fetch the updated lessons data
-        })
-        .catch((error) => {
-          console.error("Error updating lessons:", error);
-        });
+            const data = await response.json();
+            if (!response.ok)
+              throw new Error(
+                data.message ||
+                  `Failed to update lesson availability for ID: ${item.lessonId}`
+              );
+            console.log(`Lesson availability updated for ID: ${item.lessonId}`);
+          })
+        );
+
+        // Optionally, refresh the lessons list if displayed elsewhere
+        this.fetchLessons();
+      } catch (error) {
+        console.error("Failed to update lesson spaces:", error.message);
+        alert(
+          "Failed to update lesson availability, some data might be outdated."
+        );
+      }
     },
     canAddToCart(product) {
       // Check if product can be added to cart
