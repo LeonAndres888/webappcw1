@@ -136,10 +136,7 @@ figure img {
   border-radius: 5px;
   height: 30px;
   width: 110px;
-  margin-right: 40px;
-  position: absolute;
-  left: 500px;
-  top: 140px;
+  margin: 40px;
 }
 
 .product-card {
