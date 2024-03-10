@@ -83,7 +83,7 @@ export default {
         name: orderDetails.name,
         phoneNumber: orderDetails.phone,
         items: this.cart.map((item) => ({
-          lessonId: item.id, // Make sure the property names match your schema
+          lessonId: item.id, // Ensure this matches your cart item structure
           quantity: item.quantity,
         })),
       };
@@ -99,19 +99,18 @@ export default {
           }
         );
 
-        const data = await response.json();
-        if (!response.ok)
-          throw new Error(data.message || "Failed to submit order");
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Failed to submit order");
+        }
 
-        console.log("Order submitted successfully:", data);
+        console.log("Order submitted successfully");
+        await this.updateLessonSpaces(this.cart, true); // Update lesson spaces after successful order submission
 
-        // Assuming the order submission was successful, update the lesson availability
-        await this.updateLessonSpaces(this.cart, true);
-
-        this.orderSubmitted = true;
+        this.orderSubmitted = true; // Flag the order as submitted
         this.cart = []; // Clear the cart
       } catch (error) {
-        console.error("Order submission failed:", error.message);
+        console.error("Order submission failed:", error);
         alert("Failed to submit order, please try again.");
       }
     },
@@ -142,27 +141,20 @@ export default {
             );
 
             if (!response.ok) {
-              // Attempt to parse JSON response, but fallback to response text if parsing fails
-              let errorMessage = `Failed to update lesson availability for ID: ${item.lessonId}. Status: ${response.status}`;
-              try {
-                const data = await response.json();
-                errorMessage = data.message || errorMessage;
-              } catch (jsonError) {
-                console.error("Error parsing response JSON:", jsonError);
-                const textMessage = await response.text();
-                errorMessage = textMessage || errorMessage;
-              }
-              throw new Error(errorMessage);
+              const errorData = await response.json();
+              throw new Error(
+                errorData.message ||
+                  `Failed to update lesson availability for ID: ${item.lessonId}`
+              );
             }
 
             console.log(`Lesson availability updated for ID: ${item.lessonId}`);
           })
         );
 
-        // Optionally, refresh the lessons list if displayed elsewhere
-        this.fetchLessons();
+        this.fetchLessons(); // Optionally refresh the lessons list
       } catch (error) {
-        console.error("Failed to update lesson spaces:", error.message);
+        console.error("Failed to update lesson spaces:", error);
         alert(
           "Failed to update lesson availability, some data might be outdated."
         );
