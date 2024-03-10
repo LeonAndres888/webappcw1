@@ -10,10 +10,13 @@
       <lesson-component
         v-if="showProduct"
         :lessons="products"
+        :searchLesson="searchLesson"
+        :sortAttribute="sortAttribute"
+        :sortOrder="sortOrder"
         @add-to-cart="addItemToCart"
-        @update:searchLesson="searchLesson = $event"
-        @update:sortAttribute="sortAttribute = $event"
-        @update-sort-order="sortOrder = $event"
+        @update:searchLesson="updateSearchLesson"
+        @update:sortAttribute="updateSortAttribute"
+        @update-sort-order="updateSortOrder"
       />
       <checkout-component
         v-else
@@ -48,7 +51,6 @@ export default {
     };
   },
   computed: {
-
     cartItemCount() {
       return this.cart.reduce((total, item) => total + item.quantity, 0);
     },
@@ -250,7 +252,4 @@ button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
-
-
-
 </style>

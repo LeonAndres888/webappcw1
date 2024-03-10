@@ -47,7 +47,12 @@
 
 <script>
 export default {
-  props: ["products", "searchLesson", "sortAttribute", "sortOrder"],
+  props: {
+    products: Array,
+    searchLesson: String,
+    sortAttribute: String,
+    sortOrder: String,
+  },
   computed: {
     filteredProducts() {
       let searchTerm = this.searchLesson.trim().toLowerCase();
@@ -74,8 +79,22 @@ export default {
     },
   },
   methods: {
+    updateSearchLesson(value) {
+      this.$emit("update:searchLesson", value);
+    },
+    updateSortAttribute(value) {
+      this.$emit("update:sortAttribute", value);
+    },
     updateSortOrder(order) {
-      this.$emit("update-sort-order", order);
+      this.$emit("update:sortOrder", order);
+    },
+  },
+  watch: {
+    searchLesson(newVal) {
+      this.updateSearchLesson(newVal);
+    },
+    sortAttribute(newVal) {
+      this.updateSortAttribute(newVal);
     },
   },
 };
