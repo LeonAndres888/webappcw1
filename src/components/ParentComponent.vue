@@ -14,6 +14,9 @@
         :searchLesson="searchLesson"
         :sortAttribute="sortAttribute"
         :sortOrder="sortOrder"
+        @update:searchLesson="searchLesson = $event"
+        @update:sortAttribute="sortAttribute = $event"
+        @update-sort-order="sortOrder = $event"
       />
       <checkout-component
         v-else

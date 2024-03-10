@@ -1,41 +1,41 @@
 <template>
   <div id="app">
-    <header-component
+    <parent-component
       :sitename="sitename"
       :cartItemCount="cartItemCount"
       @toggle-cart="toggleCart"
     />
-    <product-list-component
+    <lesson-component
       v-if="showProduct"
-      :products="sortedProducts"
+      :lessons="sortedProducts"
       @add-to-cart="addItemToCart"
     />
-    <cart-component
+    <checkout-component
       v-else
       :cart="cart"
-      @remove-item-from-cart="removeItemFromCart"
+      @remove-from-cart="removeItemFromCart"
     />
   </div>
 </template>
 
 <script>
-import HeaderComponent from "./components/HeaderComponent.vue";
-import ProductListComponent from "./components/ProductListComponent.vue";
-import CartComponent from "./components/CartComponent.vue";
+import ParentComponent from "./components/ParentComponent.vue";
+import LessonComponent from "./components/LessonComponent.vue";
+import CheckoutComponent from "./components/CheckoutComponent.vue";
 
 export default {
   name: "App",
   components: {
-    HeaderComponent,
-    ProductListComponent,
-    CartComponent,
+    ParentComponent,
+    LessonComponent,
+    CheckoutComponent,
   },
   data() {
     return {
       sitename: "👨‍🎓 STUDY SESSION STORE 👩‍🎓",
-      showProduct: true, // Toggle between product list and cart view
-      products: [], // Array of products fetched from server
-      cart: [], // Array of products added to the cart
+      showProduct: true,
+      products: [],
+      cart: [],
       searchLesson: "",
       sortAttribute: "title",
       sortOrder: "ascending",
@@ -43,31 +43,30 @@ export default {
   },
   computed: {
     cartItemCount() {
+      // Calculates the total count of items in the cart
       return this.cart.reduce((total, item) => total + item.quantity, 0);
     },
     sortedProducts() {
-      return this.products.sort((a, b) => {
-        if (
-          this.sortAttribute === "price" ||
-          this.sortAttribute === "availableInventory"
-        ) {
-          return (
-            (a[this.sortAttribute] - b[this.sortAttribute]) *
-            (this.sortOrder === "ascending" ? 1 : -1)
-          );
+      // Returns the products sorted based on the selected attribute and order
+      let sorted = [...this.products].sort((a, b) => {
+        let comparison = 0;
+        if (a[this.sortAttribute] < b[this.sortAttribute]) {
+          comparison = -1;
+        } else if (a[this.sortAttribute] > b[this.sortAttribute]) {
+          comparison = 1;
         }
-        return (
-          a[this.sortAttribute].localeCompare(b[this.sortAttribute]) *
-          (this.sortOrder === "ascending" ? 1 : -1)
-        );
+        return this.sortOrder === "ascending" ? comparison : comparison * -1;
       });
+      return sorted;
     },
   },
   methods: {
     toggleCart() {
+      // Toggles between showing the product list and the cart
       this.showProduct = !this.showProduct;
     },
     addItemToCart(product) {
+      // Adds an item to the cart or increases its quantity if it's already in the cart
       let found = this.cart.find((item) => item.id === product.id);
       if (found) {
         found.quantity += 1;
@@ -76,23 +75,31 @@ export default {
       }
     },
     removeItemFromCart(item) {
+      // Removes an item from the cart
       const index = this.cart.findIndex((cartItem) => cartItem.id === item.id);
       if (index !== -1) {
         this.cart.splice(index, 1);
       }
     },
     fetchLessons() {
+      // Fetches lesson data from the server
       fetch(
         "https://storefinal-env.eba-vfsgptpf.us-east-1.elasticbeanstalk.com/api/lessons"
       )
-        .then((response) => response.json())
+        .then((response) => {
+          if (!response.ok) throw new Error("Network response was not ok");
+          return response.json();
+        })
         .then((data) => {
           this.products = data;
         })
-        .catch((error) => console.error("Error fetching lessons:", error));
+        .catch((error) => {
+          console.error("Error fetching lessons:", error);
+        });
     },
   },
   mounted() {
+    // Fetches lessons when the component mounts
     this.fetchLessons();
   },
 };
@@ -101,4 +108,3 @@ export default {
 <style>
 /* Global styles */
 </style>
-./components/LessonComponent.vue ./components/CheckoutComponent.vue

@@ -3,13 +3,18 @@
     <!-- Search input -->
     <input
       type="text"
-      v-model="searchLesson"
+      :value="searchLesson"
+      @input="$emit('update:searchLesson', $event.target.value)"
       placeholder="Search lessons..."
       class="search-bar"
     />
 
     <!-- Dropdown for sorting -->
-    <select v-model="sortAttribute" class="drop-down">
+    <select
+      :value="sortAttribute"
+      @change="$emit('update:sortAttribute', $event.target.value)"
+      class="drop-down"
+    >
       <option value="title">Subject</option>
       <option value="location">Location</option>
       <option value="price">Price</option>
@@ -17,10 +22,13 @@
     </select>
 
     <!-- Sorting buttons -->
-    <button @click="updateSortOrder('ascending')" class="asc-button">
+    <button @click="$emit('update-sort-order', 'ascending')" class="asc-button">
       Ascending
     </button>
-    <button @click="updateSortOrder('descending')" class="dsc-button">
+    <button
+      @click="$emit('update-sort-order', 'descending')"
+      class="dsc-button"
+    >
       Descending
     </button>
 
@@ -74,11 +82,6 @@ export default {
           a[this.sortAttribute].localeCompare(b[this.sortAttribute]) * modifier
         );
       });
-    },
-  },
-  methods: {
-    updateSortOrder(order) {
-      this.$emit("update-sort-order", order);
     },
   },
 };
