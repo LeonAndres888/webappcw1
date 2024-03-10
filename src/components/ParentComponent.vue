@@ -124,9 +124,14 @@ export default {
       }
 
       try {
-        // Update each lesson's availability in parallel
         await Promise.all(
           orderedItems.map(async (item) => {
+            if (!item.lessonId) {
+              throw new Error(
+                `Lesson ID is undefined for item: ${JSON.stringify(item)}`
+              );
+            }
+
             const response = await fetch(
               `https://storefinal-env.eba-vfsgptpf.us-east-1.elasticbeanstalk.com/api/lessons/${item.lessonId}`,
               {
@@ -136,12 +141,20 @@ export default {
               }
             );
 
-            const data = await response.json();
-            if (!response.ok)
-              throw new Error(
-                data.message ||
-                  `Failed to update lesson availability for ID: ${item.lessonId}`
-              );
+            if (!response.ok) {
+              // Attempt to parse JSON response, but fallback to response text if parsing fails
+              let errorMessage = `Failed to update lesson availability for ID: ${item.lessonId}. Status: ${response.status}`;
+              try {
+                const data = await response.json();
+                errorMessage = data.message || errorMessage;
+              } catch (jsonError) {
+                console.error("Error parsing response JSON:", jsonError);
+                const textMessage = await response.text();
+                errorMessage = textMessage || errorMessage;
+              }
+              throw new Error(errorMessage);
+            }
+
             console.log(`Lesson availability updated for ID: ${item.lessonId}`);
           })
         );
