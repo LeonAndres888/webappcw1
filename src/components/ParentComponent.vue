@@ -143,7 +143,7 @@ export default {
       let cartItemCount = cartItem ? cartItem.quantity : 0;
       return product.availableInventory > cartItemCount;
     },
-    addItemCart(lesson) {
+    addItemToCart(lesson) {
       // Check if the lesson can be added to the cart based on available inventory
       if (lesson.availableInventory <= 0) {
         alert("This lesson is fully booked.");
