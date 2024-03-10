@@ -76,82 +76,34 @@ export default {
           console.error("Error fetching lessons:", error);
         });
     },
-submitOrder(orderDetails) {
-  // Assuming orderDetails contains { name, phone } and cart items are directly accessed from `this.cart`
-  const orderPayload = {
-    name: orderDetails.name,
-    phoneNumber: orderDetails.phone,
-    items: this.cart.map(item => ({
-      lessonId: item.id, // Adjust according to your item structure
-      quantity: item.quantity,
-    })),
-  };
+    submitOrder(orderDetails) {
+      // Validation logic if needed
+      if (!this.validateOrder(orderDetails)) {
+        alert("Invalid order details.");
+        return;
+      }
 
-  // API endpoint - replace with your actual endpoint
-  const apiEndpoint = "https://storefinal-env.eba-vfsgptpf.us-east-1.elasticbeanstalk.com/api/orders";
-
-  fetch(apiEndpoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(orderPayload),
-  })
-  .then(response => {
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return response.json();
-  })
-  .then(data => {
-    console.log("Order submitted successfully", data);
-
-    // Here you can clear the cart and update any state related to the order submission
-    this.cart = [];
-    this.orderSubmitted = true;
-
-    // You can also navigate the user to a different page or show a success message
-    alert("Thank you for your order!");
-  })
-  .catch(error => {
-    console.error("Error submitting order:", error);
-
-    // Handle errors such as showing an error message to the user
-    alert("There was a problem with your order. Please try again.");
-  });
-}
-
-
-      // Log order items to the console before submitting
-      console.log("Order items before submitting:", order.items);
-
-      fetch(
-        "https://storefinal-env.eba-vfsgptpf.us-east-1.elasticbeanstalk.com/api/orders",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(order),
-        }
-      )
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          return response.json();
-        })
+      const apiEndpoint =
+        "https://storefinal-env.eba-vfsgptpf.us-east-1.elasticbeanstalk.com/api/orders";
+      fetch(apiEndpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: orderDetails.name,
+          phoneNumber: orderDetails.phone,
+          items: this.cart.map(({ id, quantity }) => ({
+            lessonId: id,
+            quantity,
+          })),
+        }),
+      })
+        .then((response) => response.json())
         .then((data) => {
-          this.orderSubmitted = true;
-          console.log("Order submitted:", data);
-          // Call updateLessonSpaces with a new parameter to indicate order submission
-          return this.updateLessonSpaces(order.items, true);
+          console.log("Order submitted successfully:", data);
+          this.orderSubmitted = true; // Update state as needed
+          this.cart = []; // Clear the cart
         })
-        .then(() => {
-          // Re-fetch lessons to update the local state with new data from the server
-          this.fetchLessons();
-        })
-        .catch((error) => {
-          console.error("Error submitting order:", error);
-        });
+        .catch((error) => console.error("Order submission failed:", error));
     },
     updateLessonSpaces(orderedItems, isOrderSubmitted = false) {
       // Updates available space in lessons after an order is submitted
@@ -213,7 +165,7 @@ submitOrder(orderDetails) {
       // Update sorting order based on asc or dsc buttons
       this.sortOrder = order;
     },
-    removeItemCart(item) {
+    removeItemFromCart(item) {
       let cartItemIndex = this.cart.findIndex(
         (cartItem) => cartItem.id === item.id
       );
@@ -240,6 +192,7 @@ submitOrder(orderDetails) {
   },
 };
 </script>
+
 <style scoped>
 button {
   padding: 8px 20px;
