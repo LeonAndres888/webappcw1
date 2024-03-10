@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <header>
-      <h1>{{ sitename }}</h1>
+      <h1 id="titlename">{{ sitename }}</h1>
       <button id="cartBtn" @click="toggleCart">
         🛒 Cart ({{ cartItemCount }})
       </button>
@@ -208,6 +208,15 @@ export default {
 };
 </script>
 <style scoped>
+button {
+  padding: 8px 20px;
+  border: none;
+  background-color: #2a2a2a;
+  color: #ffffff;
+  transition: background-color 0.6s ease;
+  border-radius: 50px;
+  cursor: pointer;
+}
 #cartBtn {
   border-radius: 5px;
   height: 70px;
