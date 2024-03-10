@@ -104,6 +104,21 @@ export default {
       const phoneRegex = /^[0-9()-]+$/;
       return nameRegex.test(this.custName) && phoneRegex.test(this.custPhone);
     },
+    sortedProducts() {
+      // Sorts filtered product list based on selected criteria
+      let modifier = this.sortOrder === "ascending" ? 1 : -1;
+      return this.filteredProducts.slice().sort((a, b) => {
+        if (
+          this.sortAttribute === "price" ||
+          this.sortAttribute === "availableInventory"
+        ) {
+          return (a[this.sortAttribute] - b[this.sortAttribute]) * modifier;
+        }
+        return (
+          a[this.sortAttribute].localeCompare(b[this.sortAttribute]) * modifier
+        );
+      });
+    },
   },
   methods: {
     fetchLessons() {
