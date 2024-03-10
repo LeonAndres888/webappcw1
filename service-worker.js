@@ -1,11 +1,5 @@
-// Incrementing CACHE_VERSION will kick off the install event and force previously cached
-// resources to be cached again.
-const CACHE_VERSION = 2;
-const CURRENT_CACHES = {
-  prefetch: "prefetch-cache-v" + CACHE_VERSION,
-};
-
-const urlsToCache = [
+const cacheName = "lessons-v1"; // You can increment the version to 'v2', 'v3', etc., when you update the cache.
+const cacheFiles = [
   "/",
   "/index.html",
   "/styles.css",
@@ -14,58 +8,52 @@ const urlsToCache = [
   "/images/english.png",
   "/images/math.png",
   "/images/music.png",
-  // Add other URLs you want to cache
 ];
 
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CURRENT_CACHES.prefetch).then((cache) => {
-      return cache.addAll(urlsToCache);
+self.addEventListener("install", function (e) {
+  console.log("[Service Worker] Install");
+  e.waitUntil(
+    caches.open(cacheName).then(function (cache) {
+      console.log("[Service Worker] Caching all the files");
+      return cache.addAll(cacheFiles);
     })
   );
 });
 
-self.addEventListener("activate", (event) => {
-  const expectedCacheNames = Object.values(CURRENT_CACHES);
-
-  // Active service worker takes control of the page as soon as it's in waiting
-  // This will remove any old versions of the cache
-  event.waitUntil(
-    caches
-      .keys()
-      .then((cacheNames) => {
-        return Promise.all(
-          cacheNames.map((cacheName) => {
-            if (!expectedCacheNames.includes(cacheName)) {
-              console.log("Deleting out of date cache:", cacheName);
-              return caches.delete(cacheName);
-            }
-          })
-        );
-      })
-      .then(() => {
-        return self.clients.claim();
-      })
+// Add the fetch event handler to retrieve from the cache or fetch and cache
+self.addEventListener("fetch", function (e) {
+  e.respondWith(
+    caches.match(e.request).then(function (r) {
+      console.log("[Service Worker] Fetching resource: " + e.request.url);
+      return (
+        r ||
+        fetch(e.request).then(function (response) {
+          return caches.open(cacheName).then(function (cache) {
+            console.log(
+              "[Service Worker] Caching new resource: " + e.request.url
+            );
+            cache.put(e.request, response.clone());
+            return response;
+          });
+        })
+      );
+    })
   );
 });
 
-self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      if (response) {
-        return response;
-      }
-      return fetch(event.request).then((response) => {
-        // Check if we received a valid response
-        if (!response || response.status !== 200 || response.type !== "basic") {
-          return response;
-        }
-        const responseToCache = response.clone();
-        caches.open(CURRENT_CACHES.prefetch).then((cache) => {
-          cache.put(event.request, responseToCache);
-        });
-        return response;
-      });
+// Update a service worker by removing old caches
+self.addEventListener("activate", function (e) {
+  e.waitUntil(
+    caches.keys().then(function (keyList) {
+      return Promise.all(
+        keyList.map(function (key) {
+          if (key !== cacheName) {
+            console.log("[Service Worker] Removing old cache: " + key);
+            return caches.delete(key);
+          }
+        })
+      );
     })
   );
+  return self.clients.claim();
 });
