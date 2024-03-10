@@ -12,17 +12,6 @@
       <option value="availableInventory">Spaces</option>
     </select>
 
-    <!-- Sorting buttons -->
-    <button @click="$emit('update-sort-order', 'ascending')" class="asc-button">
-      Ascending
-    </button>
-    <button
-      @click="$emit('update-sort-order', 'descending')"
-      class="dsc-button"
-    >
-      Descending
-    </button>
-
     <!-- Lesson cards displayed -->
     <div
       v-for="product in sortedProducts"
@@ -127,30 +116,6 @@ main {
 figure img {
   width: 40px;
   max-width: 300px;
-}
-.search-bar {
-  width: 200px;
-  height: 40px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-}
-
-.drop-down {
-  border-radius: 5px;
-  height: 30px;
-  width: 110px;
-  margin-right: 20px;
-}
-
-.asc-button,
-.dsc-button {
-  border-radius: 5px;
-  height: 30px;
-  width: 110px;
-  margin-right: 10px;
-  background-color: #2a2a2a;
-  color: #ffffff;
-  cursor: pointer;
 }
 
 .product-card {
