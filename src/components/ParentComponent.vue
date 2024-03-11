@@ -148,7 +148,7 @@ export default {
 
             // Update the PUT request URL to use the correct `item.id`
             const response = await fetch(
-              `https://storefinal-env.eba-vfsgptpf.us-east-1.elasticbeanstalk.com/api/lessons/${lesson.id}`,
+              `https://storefinal-env.eba-vfsgptpf.us-east-1.elasticbeanstalk.com/api/lessons/${item.id}`,
               {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
