@@ -1,2 +1,18 @@
-if(!self.define){let e,s={};const n=(n,i)=>(n=new URL(n+".js",i).href,s[n]||new Promise((s=>{if("document"in self){const e=document.createElement("script");e.src=n,e.onload=s,document.head.appendChild(e)}else e=n,importScripts(n),s()})).then((()=>{let e=s[n];if(!e)throw new Error(`Module ${n} didn’t register its module`);return e})));self.define=(i,r)=>{const o=e||("document"in self?document.currentScript.src:"")||location.href;if(s[o])return;let t={};const f=e=>n(e,o),l={module:{uri:o},exports:t,require:f};s[o]=Promise.all(i.map((e=>l[e]||f(e)))).then((e=>(r(...e),t)))}}define(["./workbox-6567b62a"],(function(e){"use strict";e.setCacheNameDetails({prefix:"webappcw1"}),self.addEventListener("message",(e=>{e.data&&"SKIP_WAITING"===e.data.type&&self.skipWaiting()})),e.precacheAndRoute([{url:"/css/app.65130490.css",revision:null},{url:"/index.html",revision:"a867ba37910ecf606088b67f2790cf71"},{url:"/js/app.a948fed2.js",revision:null},{url:"/js/chunk-vendors.6f7cf295.js",revision:null},{url:"/manifest.json",revision:"6ea6f0eb0ff36b98b78b516fc6f41f47"}],{})}));
-//# sourceMappingURL=service-worker.js.map
+var cacheName = "lessons-v5";
+var cacheFiles = [
+  "webappcw1/public/index.html",
+  "webappcw1/src/components/ParentComponent.vue",
+  "webappcw1/src/components/LessonComponent.vue",
+  "webappcw1/src/components/CheckoutComponent.vue",
+  "webappcw1/manifest.json",
+];
+
+self.addEventListener("install", function (e) {
+  console.log("[Service Worker] Install");
+  e.waitUntil(
+    caches.open(cacheName).then(function (cache) {
+      console.log("[Service Worker] Caching files");
+      return cache.addAll(cacheFiles);
+    })
+  );
+});
