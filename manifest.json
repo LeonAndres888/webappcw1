@@ -7,7 +7,7 @@
     { "src": "./images/math.png", "sizes": "512x512", "type": "image/png" },
     { "src": "./images/music.png", "sizes": "512x512", "type": "image/png" }
   ],
-  "start_url": "index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#fffff",
   "scope": "."
